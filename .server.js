@@ -36,8 +36,8 @@ const JoinRequest = mongoose.model('JoinRequest', joinSchema);
 const transporter = nodemailer.createTransport({
     service: 'gmail', // Use your email service provider
     auth: {
-        user: 'mazzie8079@gmail.com', // Your email address
-        pass: 'Airezz1111$$' // Your email password or app password
+        user: 'myraywhiteindoesia@gmail.com', // Your email address
+        pass: 'kksw tnzf zmff nymw' // Your email password or app password
     }
 });
 
@@ -71,11 +71,8 @@ app.post('/join', async (req, res) => {
 app.post('/verify-code', async (req, res) => {
     const { email, code } = req.body;
 
-    // Here you would check the code against the one sent to the email
-    // For demonstration, let's assume the code is always '123456'
-    const expectedCode = '123456'; // Replace this with your actual code logic
-
-    if (code === expectedCode) {
+    // Check the code against the one sent to the email
+    if (code === currentVerificationCode) {
         res.status(200).json({ message: 'Verification successful!' });
     } else {
         res.status(400).json({ message: 'Invalid verification code.' });
@@ -87,22 +84,23 @@ app.post('/send-verification', async (req, res) => {
     const { email } = req.body;
 
     // Generate a random verification code
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
+    VerificationCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
 
     // Set up email options
     const mailOptions = {
-        from: 'mazzie8079@gmail.com', // Your email address
+        from: 'myraywhiteindonesia@gmail.com', // Your email address
         to: email,
         subject: 'Verification Code',
-        text: `Your verification code is: ${verificationCode}`
+        text: `Your verification code is: ${VerificationCode}`
     };
 
     // Send the email
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
+            console.error('Error sending email:', error); // Log the error
             return res.status(500).json({ error: 'An error occurred while sending the email.' });
         }
-        res.status(200).json({ message: 'Verification code sent successfully!', code: verificationCode });
+        res.status(200).json({ message: 'Verification code sent successfully!', code: VerificationCode });
     });
 });
 
@@ -140,4 +138,3 @@ app.post('/login', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
-

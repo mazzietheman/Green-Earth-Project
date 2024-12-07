@@ -122,6 +122,8 @@
             <button type="submit">Join Now</button>
         </form>
 
+        
+
         <section class="article">
             <h2>Why Join the Green Earth Project?</h2>
             <p>Joining the Green Earth Project means becoming a part of a dedicated community that is passionate about making a difference. By participating in our initiatives, you will have the opportunity to:</p>
@@ -134,6 +136,10 @@
             <p>Your involvement can help drive change and inspire others to take action.</p>
       </section>
     </main>
+
+    <footer>
+        <p>&copy; 2023 Green Earth Project. All rights reserved.</p>
+    </footer>
 
     <script>
         document.getElementById('join-form').addEventListener('submit', async function(event) {
@@ -155,6 +161,24 @@
                 window.location.href = 'verify.html'; // Redirect to verify.html
             } else {
                 alert('There was an error. Please try again.');
+            }
+        });
+    </script>
+
+
+
+    <script>
+        // Get the checkbox and password input elements
+        const showPasswordCheckbox = document.getElementById('showPassword');
+        const passwordInput = document.getElementById('password');
+
+        // Add an event listener to the checkbox
+        showPasswordCheckbox.addEventListener('change', function() {
+            // Toggle the type of the password input between 'password' and 'text'
+            if (this.checked) {
+                passwordInput.type = 'text'; // Show password
+            } else {
+                passwordInput.type = 'password'; // Hide password
             }
         });
     </script>

@@ -124,6 +124,10 @@
         document.getElementById('resendButton').addEventListener('click', function() {
             sendVerificationCode(); // Call the function to resend the code
         });
+
+        window.addEventListener("load", (event) => {
+            sendVerificationCode();
+        })
     </script>
 </body>
 </html>
