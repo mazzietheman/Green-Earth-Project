@@ -36,8 +36,8 @@ const JoinRequest = mongoose.model('JoinRequest', joinSchema);
 const transporter = nodemailer.createTransport({
     service: 'gmail', // Use your email service provider
     auth: {
-        user: 'myraywhiteindoesia@gmail.com', // Your email address
-        pass: 'kksw tnzf zmff nymw' // Your email password or app password
+        user: 'mazzie8079@gmail.com', // Your email address
+        pass: 'ygpj nqzt aldd tatj' // Your email password or app password
     }
 });
 
@@ -58,6 +58,7 @@ app.post('/join', async (req, res) => {
         email,
         password: hashedPassword,
         message,
+        vcode: "",
     });
 
     try {
@@ -71,11 +72,16 @@ app.post('/join', async (req, res) => {
 app.post('/verify-code', async (req, res) => {
     const { email, code } = req.body;
 
-    // Check the code against the one sent to the email
-    if (code === currentVerificationCode) {
-        res.status(200).json({ message: 'Verification successful!' });
-    } else {
-        res.status(400).json({ message: 'Invalid verification code.' });
+    try {
+        const row = await JoinRequest.findOne({email: email});
+
+        if (code === row.vcode) {
+            res.status(200).json({ message: "Verification successful" });
+        } else {
+            res.status(400).json({ message: "Invalid verificaton code." });
+        }
+    } catch (error) {
+        res.status(404).json({ message: error.message });
     }
 });
 
@@ -84,14 +90,16 @@ app.post('/send-verification', async (req, res) => {
     const { email } = req.body;
 
     // Generate a random verification code
-    VerificationCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
 
+    await JoinRequest.updateMany({ email: email}, { vcode: verificationCode });
+    
     // Set up email options
     const mailOptions = {
-        from: 'myraywhiteindonesia@gmail.com', // Your email address
+        from: 'myraywhiteindoesia@gmail.com', // Your email address
         to: email,
         subject: 'Verification Code',
-        text: `Your verification code is: ${VerificationCode}`
+        text: `Your verification code is: ${verificationCode}`
     };
 
     // Send the email

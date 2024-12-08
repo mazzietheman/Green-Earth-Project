@@ -1,133 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification - Green Earth Project</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-        }
-        h1 {
-            color: #4CAF50;
-            margin-bottom: 20px;
-        }
-        input[type="text"], input[type="email"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            width: 100%;
-            margin: 10px 0;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #resendButton {
-            padding: 8px; /* Smaller padding for the resend button */
-            width: auto; /* Allow the button to size based on content */
-            margin: 5px auto; /* Center the button */
-        }
-        #message {
-            margin-top: 15px;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Verification</h1>
-        <p>A verification code has been sent to your email. Please check your inbox.</p>
-        <input type="text" id="verificationCode" placeholder="Enter verification code" required>
-        <button id="verifyButton">Verify Code</button>
-        <button id="resendButton">Resend Code</button>
-        <p id="message"></p>
-    </div>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Verification - Green Earth Project</title>
+		<link rel="stylesheet" href="styles.css" />
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f4f4f4;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+			}
+			.container {
+				background-color: white;
+				padding: 20px;
+				border-radius: 8px;
+				box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+				max-width: 400px;
+				width: 100%;
+				text-align: center;
+			}
+			h1 {
+				color: #4caf50;
+				margin-bottom: 20px;
+			}
+			input[type="text"],
+			input[type="email"] {
+				width: 100%;
+				padding: 10px;
+				margin: 10px 0;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+			}
+			button {
+				padding: 10px;
+				background-color: #4caf50;
+				color: white;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				transition: background-color 0.3s;
+				width: 100%;
+				margin: 10px 0;
+			}
+			button:hover {
+				background-color: #45a049;
+			}
+			#resendButton {
+				padding: 8px; /* Smaller padding for the resend button */
+				width: auto; /* Allow the button to size based on content */
+				margin: 5px auto; /* Center the button */
+			}
+			#message {
+				margin-top: 15px;
+				font-size: 14px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Verification</h1>
+			<p>
+				A verification code has been sent to your email. Please check
+				your inbox.
+			</p>
+			<input
+				type="text"
+				id="verificationCode"
+				placeholder="Enter verification code"
+				required
+			/>
+			<button id="verifyButton">Verify Code</button>
+			<button id="resendButton">Resend Code</button>
+			<p id="message"></p>
+		</div>
 
-    <script>
-        // Function to send the verification code
-        async function sendVerificationCode() {
-            const email = localStorage.getItem('email'); // Retrieve email from local storage
-            const message = document.getElementById('message');
+		<script>
+			// Function to send the verification code
+			async function sendVerificationCode() {
+				const email = localStorage.getItem("email"); // Retrieve email from local storage
+				const message = document.getElementById("message");
 
-            try {
-                const response = await fetch('http://localhost:3000/send-verification', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email }),
-                });
+				try {
+					const response = await fetch(
+						"http://localhost:3000/send-verification",
+						{
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify({ email }),
+						}
+					);
 
-                const data = await response.json();
-                message.textContent = data.message;
-                message.style.color = response.ok ? 'green' : 'red';
-            } catch (error) {
-                message.textContent = 'An error occurred while resending the code.';
-                message.style.color = 'red';
-            }
-        }
+					const data = await response.json();
+					message.textContent = data.message;
+					message.style.color = response.ok ? "green" : "red";
+				} catch (error) {
+					message.textContent =
+						"An error occurred while resending the code.";
+					message.style.color = "red";
+				}
+			}
 
-        // Verify code button event listener
-        document.getElementById('verifyButton').addEventListener('click', async function() {
-            const email = localStorage.getItem('email'); // Retrieve email from local storage
-            const code = document.getElementById('verificationCode').value;
+			// Verify code button event listener
+			document
+				.getElementById("verifyButton")
+				.addEventListener("click", async function () {
+					const email = localStorage.getItem("email"); // Retrieve email from local storage
+					const code =
+						document.getElementById("verificationCode").value;
 
-            // Send the verification code to the server for validation
-            const response = await fetch('http://localhost:3000/verify-code', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, code }),
-            });
+					// Send the verification code to the server for validation
+					const response = await fetch(
+						"http://localhost:3000/verify-code",
+						{
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify({ email, code }),
+						}
+					);
 
-            const data = await response.json();
-            const message = document.getElementById('message');
-            message.textContent = data.message;
-            message.style.color = response.ok ? 'green' : 'red';
+					const data = await response.json();
+					const message = document.getElementById("message");
+					message.textContent = data.message;
+					message.style.color = response.ok ? "green" : "red";
 
-            if (response.ok) {
-                // Redirect to index.html if the code is correct
-                window.location.href = 'index.html';
-            }
-        });
+					if (response.ok) {
+						// Redirect to index.html if the code is correct
+						window.location.href = "index.html";
+					}
+				});
 
-        // Resend code button event listener
-        document.getElementById('resendButton').addEventListener('click', function() {
-            sendVerificationCode(); // Call the function to resend the code
-        });
+			// Resend code button event listener
+			document
+				.getElementById("resendButton")
+				.addEventListener("click", function () {
+					sendVerificationCode(); // Call the function to resend the code
+				});
 
-        window.addEventListener("load", (event) => {
-            sendVerificationCode();
-        })
-    </script>
-</body>
+			window.addEventListener("load", (event) => {
+				sendVerificationCode();
+			});
+		</script>
+	</body>
 </html>
