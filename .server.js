@@ -55,6 +55,13 @@ app.post('/join', async (req, res) => {
 		return;
 	}
 
+	//check if email address already registered
+	const doesUsernameExit = await JoinRequest.exists({ username: username });
+	if(doesUsernameExit){
+		res.status(201).json({ success:false, message: "Username address already registered" });
+		return;
+	}
+
     // Hash the password before saving (use bcrypt or similar)
     const hashedPassword = await bcrypt.hash(password, 10);
 
