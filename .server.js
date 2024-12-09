@@ -55,7 +55,7 @@ app.post('/join', async (req, res) => {
 		return;
 	}
 
-	//check if email address already registered
+	//check if username already registered
 	const doesUsernameExit = await JoinRequest.exists({ username: username });
 	if(doesUsernameExit){
 		res.status(201).json({ success:false, message: "Username address already registered" });
