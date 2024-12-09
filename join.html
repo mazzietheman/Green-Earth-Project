@@ -151,17 +151,32 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+					'Accept': 'application/json',
                 },
                 body: JSON.stringify(data),
-            });
+            })
+			.then(function (response) {
+				return response.json();
+			})
+			.then(function (res) {
+				if(res.success){
+					alert('Thank you for joining us! Please verify your email.');
+					localStorage.setItem('email', data.email); // Store email in local storage
+					window.location.href = 'verify.html'; // Redirect to verify.html
+				} else {
+					alert(res.message);
+				}
+			})
     
-            if (response.ok) {
-                alert('Thank you for joining us! Please verify your email.');
-                localStorage.setItem('email', data.email); // Store email in local storage
-                window.location.href = 'verify.html'; // Redirect to verify.html
-            } else {
-                alert('There was an error. Please try again.');
-            }
+            // if (response.ok) {
+			// 	console.log(response);
+            //     alert('Thank you for joining us! Please verify your email.');
+            //     localStorage.setItem('email', data.email); // Store email in local storage
+            //     //window.location.href = 'verify.html'; // Redirect to verify.html
+            // } else {
+
+            //     alert('There was an error. Please try again.');
+            // }
         });
     </script>
 
