@@ -43,10 +43,11 @@ const transporter = nodemailer.createTransport({
 
 // Route to handle join requests
 app.post('/join', async (req, res) => {
-    const { username, email, password, message } = req.body;
+
+    const { firstname, lastname, username, email, city, password } = req.body;
 
     // Validate input (add your validation logic here)
-    if (!username || !email || !password || !message) {
+    if (!firstname || !lastname || !username || !email || !city || !password) {
         return res.status(400).json({ success:false, message: 'All fields are required.' });
     }
 
