@@ -1,3 +1,4 @@
+
 body {
     font-family: 'Arial', sans-serif; /* Use a clean, professional font */
     line-height: 1.6; /* Improve readability */
@@ -43,11 +44,11 @@ nav ul li a:hover {
 }
 
 footer {
-    background-color: #333; /* Dark footer background */
-    color: white; /* Footer text color */
-    text-align: center; /* Center footer text */
-    padding: 15px 0; /* Padding around footer */
-    position: relative; /* Positioning */
-    bottom: 0; /* Stick to bottom */
-    width: 100%; /* Full width */
+    text-align: center;
+    padding: 10px 0;
+    background: #4CAF50;
+    color: white;
+    position: relative;
+    bottom: 0;
+    width: 100%;
 }

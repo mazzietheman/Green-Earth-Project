@@ -14,10 +14,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/recycle_project", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
+mongoose.connect("mongodb://localhost:27017/recycle_project", {}).then(() => {
     console.log("MongoDB connected");
 }).catch(err => {
     console.error("MongoDB connection error:", err);
@@ -25,10 +22,13 @@ mongoose.connect("mongodb://localhost:27017/recycle_project", {
 
 // Define a schema and model for join requests
 const joinSchema = new mongoose.Schema({
+    firstname: String,
+    lastname: String,
     username: String,
     email: String,
     password: String,
-    message: String,
+	vcode: String,
+    city: String,
 });
 
 const JoinRequest = mongoose.model('JoinRequest', joinSchema);
@@ -47,25 +47,41 @@ app.post('/join', async (req, res) => {
 
     // Validate input (add your validation logic here)
     if (!username || !email || !password || !message) {
-        return res.status(400).json({ error: 'All fields are required.' });
+        return res.status(400).json({ success:false, message: 'All fields are required.' });
     }
+
+	//check if email address already registered
+	const doesUserExit = await JoinRequest.exists({ email: email });
+	if(doesUserExit){
+		res.status(201).json({ success:false, message: "Email address already registered" });
+		return;
+	}
+
+	//check if username already registered
+	const doesUsernameExit = await JoinRequest.exists({ username: username });
+	if(doesUsernameExit){
+		res.status(201).json({ success:false, message: "Username address already registered" });
+		return;
+	}
 
     // Hash the password before saving (use bcrypt or similar)
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newJoinRequest = new JoinRequest({
+        firstname,
+        lastname,
         username,
         email,
         password: hashedPassword,
-        message,
         vcode: "",
+        city,
     });
 
     try {
         await newJoinRequest.save();
-        res.status(201).json({ message: 'Join request submitted successfully!' });
+        res.status(201).json({ success:true, message: 'Join request submitted successfully!' });
     } catch (error) {
-        res.status(500).json({ error: 'An error occurred while saving your request.' });
+        res.status(500).json({ success:false, message: 'An error occurred while saving your request.' });
     }
 });
 
@@ -76,12 +92,12 @@ app.post('/verify-code', async (req, res) => {
         const row = await JoinRequest.findOne({email: email});
 
         if (code === row.vcode) {
-            res.status(200).json({ message: "Verification successful" });
+			res.status(200).json({ success:true, message: "Verification successful" });
         } else {
-            res.status(400).json({ message: "Invalid verificaton code." });
+            res.status(400).json({  success:false, message: "Invalid verificaton code." });
         }
     } catch (error) {
-        res.status(404).json({ message: error.message });
+		res.status(500).json({  success:false, message: error.message });
     }
 });
 
@@ -96,7 +112,7 @@ app.post('/send-verification', async (req, res) => {
     
     // Set up email options
     const mailOptions = {
-        from: 'myraywhiteindoesia@gmail.com', // Your email address
+        from: 'mazzie8079@gmail.com', // Your email address
         to: email,
         subject: 'Verification Code',
         text: `Your verification code is: ${verificationCode}`

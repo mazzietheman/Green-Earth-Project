@@ -103,11 +103,20 @@
     <main>
         <h2>Become a Part of Our Mission!</h2>
         <form id="join-form">
+            <label for="firstname">Firstname:</label>
+            <input type="text" id="firstname" name="firstname" required>
+
+            <label for="lastname">Lastname:</label>
+            <input type="text" id="lastname" name="lastname" required>
+
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
             
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
             
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
@@ -115,12 +124,11 @@
                 <input type="checkbox" id="showPassword">
                 <label for="showPassword">Show Password</label>
             </div>
-            
-            <label for="message">Message:</label>
-            <textarea id="message" name="message" required></textarea>
-            
+               
             <button type="submit">Join Now</button>
         </form>
+
+        <p id="error-message" style="color: red;"></p>
 
         
 
@@ -138,7 +146,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2023 Green Earth Project. All rights reserved.</p>
+        <p>&copy; © 2023 Green Earth Project. All rights reserved</p>
     </footer>
 
     <script>
@@ -151,16 +159,44 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+					'Accept': 'application/json',
                 },
                 body: JSON.stringify(data),
-            });
+            })
+			.then(function (response) {
+				return response.json();
+			})
+			.then(function (res) {
+				if(res.success){
+					alert('Thank you for joining us! Please verify your email.');
+					localStorage.setItem('email', data.email); // Store email in local storage
+					window.location.href = 'verify.html'; // Redirect to verify.html
+				} else {
+					alert(res.message);
+				}
+			})
     
-            if (response.ok) {
-                alert('Thank you for joining us! Please verify your email.');
-                localStorage.setItem('email', data.email); // Store email in local storage
-                window.location.href = 'verify.html'; // Redirect to verify.html
-            } else {
-                alert('There was an error. Please try again.');
+        });
+    </script>
+
+
+    <script>
+        document.getElementById('join-form').addEventListener('submit', function(event) {
+            const firstname = document.getElementById('firstname').value;
+            const lastname = document.getElementById('lastname').value;
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const city = document.getElementById('city').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+
+            // Clear previous error message
+            errorMessage.textContent = '';
+
+            // Check if all fields are filled
+            if (!firstname || !lastname || !username || !email || !city || !password) {
+                errorMessage.textContent = 'All fields are required.';
+                event.preventDefault(); // Prevent form submission
             }
         });
     </script>

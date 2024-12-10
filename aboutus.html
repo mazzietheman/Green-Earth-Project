@@ -6,6 +6,17 @@
     <title>About Us - Green Earth Project</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        html, body {
+            height: 100%; /* Set height to 100% */
+            margin: 0; /* Remove default margin */
+            display: flex; /* Use flexbox */
+            flex-direction: column; /* Arrange children in a column */
+        }
+    
+        main {
+            flex: 1; /* Allow main to grow and take available space */
+        }
+    
         .about-section {
             margin: 20px 0;
         }
@@ -24,14 +35,12 @@
         .join-button:hover {
             background-color: #45a049;
         }
-
+    
         footer {
             text-align: center;
             padding: 10px 0;
             background: #4CAF50;
             color: white;
-            position: relative;
-            bottom: 0;
             width: 100%;
         }
     </style>
@@ -88,7 +97,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2023 New Green Generation. All rights reserved.</p>
+        <p>&copy; © 2023 Green Earth Project. All rights reserved</p>
     </footer>
 </body>
 </html>
