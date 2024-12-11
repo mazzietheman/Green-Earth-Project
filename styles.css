@@ -15,7 +15,7 @@ header {
 
 nav ul {
     display: flex; /* Flexbox for horizontal layout */
-    justify-content: center; /* Center the links */
+    justify-content: right; /* Center the links */
     padding: 0; /* Remove default padding */
 }
 
@@ -48,7 +48,19 @@ footer {
     padding: 10px 0;
     background: #4CAF50;
     color: white;
-    position: relative;
+    position: absolute;
     bottom: 0;
     width: 100%;
+    margin-bottom: auto;
+}
+
+.stack {
+    display: block;
+    margin: left;
+    padding-left: 5%;
+    padding-top: 5%;
+}
+
+.stack img {
+    width: 300px;
 }

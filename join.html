@@ -96,6 +96,7 @@
                 <li><a href="aboutus.html">About Us</a></li>
                 <li><a href="communitychallenge.html">Community</a></li>
                 <li><a href="join.html">Join Us</a></li>
+                <li><a href="login.html">login</a></li>
             </ul>
         </nav>
     </header>
@@ -151,38 +152,10 @@
 
     <script>
         document.getElementById('join-form').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-    
-            const response = await fetch('http://localhost:3000/join', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-					'Accept': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-			.then(function (response) {
-				return response.json();
-			})
-			.then(function (res) {
-				if(res.success){
-					alert('Thank you for joining us! Please verify your email.');
-					localStorage.setItem('email', data.email); // Store email in local storage
-					window.location.href = 'verify.html'; // Redirect to verify.html
-				} else {
-					alert(res.message);
-				}
-			})
-    
-        });
-    </script>
 
+			event.preventDefault();
 
-    <script>
-        document.getElementById('join-form').addEventListener('submit', function(event) {
-            const firstname = document.getElementById('firstname').value;
+			const firstname = document.getElementById('firstname').value;
             const lastname = document.getElementById('lastname').value;
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
@@ -196,12 +169,34 @@
             // Check if all fields are filled
             if (!firstname || !lastname || !username || !email || !city || !password) {
                 errorMessage.textContent = 'All fields are required.';
-                event.preventDefault(); // Prevent form submission
-            }
+            } else {
+
+				const formData = new FormData(this);
+				const data = Object.fromEntries(formData.entries());
+		
+				const response = await fetch('http://localhost:3000/join', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Accept': 'application/json',
+					},
+					body: JSON.stringify(data),
+				})
+				.then(function (response) {
+					return response.json();
+				})
+				.then(function (res) {
+					if(res.success){
+						alert('Thank you for joining us! Please verify your email.');
+						localStorage.setItem('email', data.email); // Store email in local storage
+						window.location.href = 'verify.html'; // Redirect to verify.html
+					} else {
+						alert(res.message);
+					}
+				})
+			}
         });
     </script>
-
-
 
     <script>
         // Get the checkbox and password input elements
