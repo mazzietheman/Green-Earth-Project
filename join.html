@@ -1,217 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join Us - Green Earth Project</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background: #4CAF50;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-        }
-        nav ul li {
-            display: inline;
-            margin: 0 15px;
-        }
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-        }
-        main {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2 {
-            color: #333;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            margin-bottom: 5px;
-        }
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        textarea {
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .show-password {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-        }
-        button {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        footer {
-            text-align: center;
-            padding: 10px 0;
-            background: #4CAF50;
-            color: white;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
-</head>
-
-<body>
-    <header>
-        <h1>Join Us</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="aboutus.html">About Us</a></li>
-                <li><a href="communitychallenge.html">Community</a></li>
-                <li><a href="join.html">Join Us</a></li>
-                <li><a href="login.html">login</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <h2>Become a Part of Our Mission!</h2>
-        <form id="join-form">
-            <label for="firstname">Firstname:</label>
-            <input type="text" id="firstname" name="firstname" required>
-
-            <label for="lastname">Lastname:</label>
-            <input type="text" id="lastname" name="lastname" required>
-
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="city">City:</label>
-            <input type="text" id="city" name="city" required>
-            
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            <div class="show-password">
-                <input type="checkbox" id="showPassword">
-                <label for="showPassword">Show Password</label>
-            </div>
-               
-            <button type="submit">Join Now</button>
-        </form>
-
-        <p id="error-message" style="color: red;"></p>
-
-        
-
-        <section class="article">
-            <h2>Why Join the Green Earth Project?</h2>
-            <p>Joining the Green Earth Project means becoming a part of a dedicated community that is passionate about making a difference. By participating in our initiatives, you will have the opportunity to:</p>
-            <ul>
-                <li>Engage in meaningful community service activities.</li>
-                <li>Learn about sustainable practices that you can implement in your daily life.</li>
-                <li>Network with like-minded individuals who share your commitment to the environment.</li>
-                <li>Be a part of exciting events and workshops focused on recycling and sustainability.</li>
-            </ul>
-            <p>Your involvement can help drive change and inspire others to take action.</p>
-      </section>
-    </main>
-
-    <footer>
-        <p>&copy; © 2023 Green Earth Project. All rights reserved</p>
-    </footer>
-
-    <script>
-        document.getElementById('join-form').addEventListener('submit', async function(event) {
-
-			event.preventDefault();
-
-			const firstname = document.getElementById('firstname').value;
-            const lastname = document.getElementById('lastname').value;
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const city = document.getElementById('city').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('error-message');
-
-            // Clear previous error message
-            errorMessage.textContent = '';
-
-            // Check if all fields are filled
-            if (!firstname || !lastname || !username || !email || !city || !password) {
-                errorMessage.textContent = 'All fields are required.';
-            } else {
-
-				const formData = new FormData(this);
-				const data = Object.fromEntries(formData.entries());
-		
-				const response = await fetch('http://localhost:3000/join', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'Accept': 'application/json',
-					},
-					body: JSON.stringify(data),
-				})
-				.then(function (response) {
-					return response.json();
-				})
-				.then(function (res) {
-					if(res.success){
-						alert('Thank you for joining us! Please verify your email.');
-						localStorage.setItem('email', data.email); // Store email in local storage
-						window.location.href = 'verify.html'; // Redirect to verify.html
-					} else {
-						alert(res.message);
-					}
-				})
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Join Us - Green Earth Project</title>
+		<link rel="stylesheet" href="styles.css" />
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				line-height: 1.6;
+				margin: 0;
+				padding: 0;
+				background-color: #f4f4f4;
 			}
-        });
-    </script>
+			header {
+				background: #4caf50;
+				color: white;
+				padding: 10px 0;
+				text-align: center;
+			}
+			nav ul {
+				list-style: none;
+				padding: 0;
+			}
+			nav ul li {
+				display: inline;
+				margin: 0 15px;
+			}
+			nav ul li a {
+				color: white;
+				text-decoration: none;
+			}
+			main {
+				max-width: 600px;
+				margin: 20px auto;
+				padding: 20px;
+				background: white;
+				border-radius: 8px;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			}
+			h1,
+			h2 {
+				color: #333;
+			}
+			form {
+				display: flex;
+				flex-direction: column;
+			}
+			label {
+				margin-bottom: 5px;
+			}
+			input[type="text"],
+			input[type="email"],
+			input[type="password"],
+			textarea {
+				padding: 10px;
+				margin-bottom: 15px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+			}
+			.show-password {
+				margin-top: 10px;
+				display: flex;
+				align-items: center;
+			}
+			button {
+				padding: 10px;
+				background-color: #4caf50;
+				color: white;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				transition: background-color 0.3s;
+			}
+			button:hover {
+				background-color: #45a049;
+			}
+			footer {
+				text-align: center;
+				padding: 10px 0;
+				background: #4caf50;
+				color: white;
+				position: relative;
+				bottom: 0;
+				width: 100%;
+			}
+		</style>
+	</head>
 
-    <script>
-        // Get the checkbox and password input elements
-        const showPasswordCheckbox = document.getElementById('showPassword');
-        const passwordInput = document.getElementById('password');
+	<body>
+		<header>
+			<h1>Join Us</h1>
+			<nav>
+				<ul>
+					<li><a href="index.html">Home</a></li>
+					<li><a href="aboutus.html">About Us</a></li>
+					<li><a href="communitychallenge.html">Community</a></li>
+					<li><a href="join.html">Join Us</a></li>
+					<li><a href="login.html">login</a></li>
+				</ul>
+			</nav>
+		</header>
 
-        // Add an event listener to the checkbox
-        showPasswordCheckbox.addEventListener('change', function() {
-            // Toggle the type of the password input between 'password' and 'text'
-            if (this.checked) {
-                passwordInput.type = 'text'; // Show password
-            } else {
-                passwordInput.type = 'password'; // Hide password
-            }
-        });
-    </script>
-</body>
+		<main>
+			<h2>Become a Part of Our Mission!</h2>
+			<form id="join-form">
+				<label for="firstname">Firstname:</label>
+				<input type="text" id="firstname" name="firstname" required />
+
+				<label for="lastname">Lastname:</label>
+				<input type="text" id="lastname" name="lastname" required />
+
+				<label for="username">Username:</label>
+				<input type="text" id="username" name="username" required />
+
+				<label for="email">Email:</label>
+				<input type="email" id="email" name="email" required />
+
+				<label for="city">City:</label>
+				<input type="text" id="city" name="city" required />
+
+				<label for="password">Password:</label>
+				<input type="password" id="password" name="password" required />
+				<div class="show-password">
+					<input type="checkbox" id="showPassword" />
+					<label for="showPassword">Show Password</label>
+				</div>
+
+				<button type="submit">Join Now</button>
+			</form>
+
+			<p id="error-message" style="color: red"></p>
+
+			<section class="article">
+				<h2>Why Join the Green Earth Project?</h2>
+				<p>
+					Joining the Green Earth Project means becoming a part of a
+					dedicated community that is passionate about making a
+					difference. By participating in our initiatives, you will
+					have the opportunity to:
+				</p>
+				<ul>
+					<li>Engage in meaningful community service activities.</li>
+					<li>
+						Learn about sustainable practices that you can implement
+						in your daily life.
+					</li>
+					<li>
+						Network with like-minded individuals who share your
+						commitment to the environment.
+					</li>
+					<li>
+						Be a part of exciting events and workshops focused on
+						recycling and sustainability.
+					</li>
+				</ul>
+				<p>
+					Your involvement can help drive change and inspire others to
+					take action.
+				</p>
+			</section>
+		</main>
+
+		<footer>
+			<p>&copy; © 2023 Green Earth Project. All rights reserved</p>
+		</footer>
+
+		<script>
+			document
+				.getElementById("join-form")
+				.addEventListener("submit", async function (event) {
+					event.preventDefault();
+
+					const firstname =
+						document.getElementById("firstname").value;
+					const lastname = document.getElementById("lastname").value;
+					const username = document.getElementById("username").value;
+					const email = document.getElementById("email").value;
+					const city = document.getElementById("city").value;
+					const password = document.getElementById("password").value;
+					const errorMessage =
+						document.getElementById("error-message");
+
+					// Clear previous error message
+					errorMessage.textContent = "";
+
+					// Check if all fields are filled
+					if (
+						!firstname ||
+						!lastname ||
+						!username ||
+						!email ||
+						!city ||
+						!password
+					) {
+						errorMessage.textContent = "All fields are required.";
+					} else {
+						const formData = new FormData(this);
+						const data = Object.fromEntries(formData.entries());
+
+						const response = await fetch(
+							"http://localhost:3000/join",
+							{
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+									Accept: "application/json",
+								},
+								body: JSON.stringify(data),
+							}
+						)
+							.then(function (response) {
+								return response.json();
+							})
+							.then(function (res) {
+								if (res.success) {
+									alert(
+										"Thank you for joining us! Please verify your email."
+									);
+									localStorage.setItem("email", data.email); // Store email in local storage
+									window.location.href = "verify.html"; // Redirect to verify.html
+								} else {
+									alert(res.message);
+								}
+							});
+					}
+				});
+		</script>
+
+		<script>
+			// Get the checkbox and password input elements
+			const showPasswordCheckbox =
+				document.getElementById("showPassword");
+			const passwordInput = document.getElementById("password");
+
+			// Add an event listener to the checkbox
+			showPasswordCheckbox.addEventListener("change", function () {
+				// Toggle the type of the password input between 'password' and 'text'
+				if (this.checked) {
+					passwordInput.type = "text"; // Show password
+				} else {
+					passwordInput.type = "password"; // Hide password
+				}
+			});
+		</script>
+	</body>
 </html>

@@ -1,122 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test - Centered Login</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #e9f5e9; /* Light green background */
-            display: flex;
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
-            height: 100vh; /* Full viewport height */
-            margin: 0;
-        }
-        .login-container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            width: 400px; /* Fixed width */
-            display: flex;
-            flex-direction: column; /* Stack children vertically */
-            align-items: center; /* Center content horizontally */
-        }
-        h2 {
-            color: #4CAF50;
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-            width: 100%; /* Full width for form groups */
-            text-align: left; /* Align labels to the left */
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: bold; /* Bold labels */
-        }
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box; /* Include padding in width */
-            transition: border-color 0.3s; /* Smooth transition for border color */
-        }
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            border-color: #4CAF50; /* Change border color on focus */
-            outline: none; /* Remove default outline */
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #45a049; /* Darker green on hover */
-        }
-        .message {
-            margin-top: 15px;
-            color: red;
-            text-align: center;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
-    <header></header>
-    <nav>
-        <ul>
-            <li><a href="communitychallenge.html">Community</a></li>
-            <li><a href="join.html">Join Us</a></li>
-            <li><a href="aboutus.html">About Us</a></li>
-            <li><a href="login.html">login</a></li>
-        </ul>
-    </nav>
-    <div class="container">
-        <div class="login">
-           <div class="container">
-                <h1>Log in</h1>
-                <input type="username" placeholder="Username">
-                <input type="password" placeholder="Password"><br>
-                <input type="checkbox"><span>Remember me</span>
-                <a href="#">Forgot password?</a>
-                <button>log in</button>
-                <hr><p>Or Connect With</p><hr>
-                <ul>
-                    <li><i class="fab fa-facebook-f fa-2x"></i></li>
-                    <li><i class="fab fa-twitter fa-2x"></i></li>
-                    <li><i class="fab fa-github fa-2x"></i></li>
-                    <li><i class="fab fa-linkedin-in fa-2x"></i></li>
-                </ul>
-                <div class="clearfix"></div>
-                <span class="copyright"></span>  
-           </div>
-        </div>
-        <div  class="register">
-            <div class="container">
-                <i class="fas fa-user-plus fa-5x"></i>
-                <h2>hello, recycler!</h2>
-                <p>Enter your personal details and start journey with us</p>
-                <button href ="join.html" class="join-button">Register</button>
-            </div>
-        </div>  
-      </div>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Test - Centered Login</title>
+		<link rel="stylesheet" href="styles.css" />
+		<style>
+			body {
+				font-family: "Arial", sans-serif;
+				background-color: #e9f5e9; /* Light green background */
+				display: flex;
+				justify-content: center; /* Center horizontally */
+				align-items: center; /* Center vertically */
+				height: 100vh; /* Full viewport height */
+				margin: 0;
+			}
+			.login-container {
+				background-color: white;
+				padding: 40px;
+				border-radius: 10px;
+				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+				width: 400px; /* Fixed width */
+				display: flex;
+				flex-direction: column; /* Stack children vertically */
+				align-items: center; /* Center content horizontally */
+			}
+			h2 {
+				color: #4caf50;
+				margin-bottom: 30px;
+				font-size: 24px;
+			}
+			.form-group {
+				margin-bottom: 20px;
+				width: 100%; /* Full width for form groups */
+				text-align: left; /* Align labels to the left */
+			}
+			label {
+				display: block;
+				margin-bottom: 5px;
+				color: #333;
+				font-weight: bold; /* Bold labels */
+			}
+			input[type="text"],
+			input[type="password"] {
+				width: 100%;
+				padding: 12px;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				box-sizing: border-box; /* Include padding in width */
+				transition: border-color 0.3s; /* Smooth transition for border color */
+			}
+			input[type="text"]:focus,
+			input[type="password"]:focus {
+				border-color: #4caf50; /* Change border color on focus */
+				outline: none; /* Remove default outline */
+			}
+			button {
+				width: 100%;
+				padding: 12px;
+				background-color: #4caf50;
+				border: none;
+				border-radius: 5px;
+				color: white;
+				font-size: 16px;
+				cursor: pointer;
+				transition: background-color 0.3s;
+			}
+			button:hover {
+				background-color: #45a049; /* Darker green on hover */
+			}
+			.message {
+				margin-top: 15px;
+				color: red;
+				text-align: center;
+				font-size: 14px;
+			}
+		</style>
+	</head>
+	<body>
+		<header></header>
+		<nav>
+			<ul>
+				<li><a href="communitychallenge.html">Community</a></li>
+				<li><a href="join.html">Join Us</a></li>
+				<li><a href="aboutus.html">About Us</a></li>
+				<li><a href="login.html">login</a></li>
+			</ul>
+		</nav>
+		<div class="container">
+			<div class="login">
+				<div class="container">
+					<form id="loginForm">
+						<h1>Log in</h1>
+						<input
+							id="username"
+							type="username"
+							placeholder="Username"
+						/>
+						<input
+							id="password"
+							type="password"
+							placeholder="Password"
+						/><br />
+						<input type="checkbox" /><span>Remember me</span>
+						<a href="#">Forgot password?</a>
+						<button>log in</button>
+						<hr />
+						<p>Or Connect With</p>
+						<hr />
+						<ul>
+							<li><i class="fab fa-facebook-f fa-2x"></i></li>
+							<li><i class="fab fa-twitter fa-2x"></i></li>
+							<li><i class="fab fa-github fa-2x"></i></li>
+							<li><i class="fab fa-linkedin-in fa-2x"></i></li>
+						</ul>
+						<div class="clearfix"></div>
+						<span class="copyright"></span>
+					</form>
+				</div>
+			</div>
+			<div class="register">
+				<div class="container">
+					<i class="fas fa-user-plus fa-5x"></i>
+					<h2>hello, recycler!</h2>
+					<p>Enter your personal details and start journey with us</p>
+					<button href="join.html" class="join-button">
+						Register
+					</button>
+				</div>
+			</div>
+		</div>
 
-    <script src="login.js"></script>
-</body>
+		<script src="login.js"></script>
+	</body>
 </html>
