@@ -92,6 +92,7 @@
 				<div class="container">
 					<form id="loginForm">
 						<h1>Log in</h1>
+						<p id="message" style="color: red"></p>
 						<input
 							id="username"
 							type="username"
@@ -124,7 +125,10 @@
 					<i class="fas fa-user-plus fa-5x"></i>
 					<h2>hello, recycler!</h2>
 					<p>Enter your personal details and start journey with us</p>
-					<button href="join.html" class="join-button">
+					<button
+						onclick="window.location.href='join.html'"
+						class="join-button"
+					>
 						Register
 					</button>
 				</div>

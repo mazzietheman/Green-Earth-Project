@@ -5,6 +5,7 @@ document
 
 		const username = document.getElementById("username").value;
 		const password = document.getElementById("password").value;
+		const message = document.getElementById("message");
 
 		try {
 			const response = await fetch("http://localhost:3000/login", {
