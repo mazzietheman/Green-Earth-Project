@@ -5,6 +5,7 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "mongoose": "^8.8.3",
+    "mongoose-paginate-v2": "^1.8.5",
     "nodemailer": "^6.9.16"
   }
 }
