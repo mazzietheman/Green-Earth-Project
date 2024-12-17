@@ -74,7 +74,7 @@ app.post("/join", async (req, res) => {
 	if (doesUsernameExit) {
 		res.status(201).json({
 			success: false,
-			message: "Username address already registered",
+			message: "Username already registered",
 		});
 		return;
 	}
@@ -271,8 +271,9 @@ app.get("/users/:id", async (req, res) => {
 	}
 });
 
-app.post("/users/edit", async (req, res) => {
-	const { _id, firstname, lastname, username, email, city, group } = req.body;
+app.post("/users/add", async (req, res) => {
+	const { firstname, lastname, username, email, city, group, password } =
+		req.body;
 
 	// Validate input
 	if (!username || !email) {
@@ -280,6 +281,92 @@ app.post("/users/edit", async (req, res) => {
 			success: false,
 			message: "Username and email are required.",
 		});
+	}
+
+	//check if email address already registered
+	const doesUserExit = await JoinRequest.exists({ email: email });
+	if (doesUserExit) {
+		res.status(201).json({
+			success: false,
+			message: "Email address already registered",
+		});
+		return;
+	}
+
+	//check if username already registered
+	const doesUsernameExit = await JoinRequest.exists({ username: username });
+	if (doesUsernameExit) {
+		res.status(201).json({
+			success: false,
+			message: "Username already registered",
+		});
+		return;
+	}
+
+	// Hash the password before saving (use bcrypt or similar)
+	const hashedPassword = await bcrypt.hash(password, 10);
+
+	const newJoinRequest = new JoinRequest({
+		firstname,
+		lastname,
+		username,
+		email,
+		city,
+		group,
+		password: hashedPassword,
+	});
+
+	try {
+		await newJoinRequest.save();
+		res.status(200).json({
+			success: true,
+			message: "Member inserted successfully.",
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: true,
+			error: "An error occurred while saving your request.",
+		});
+	}
+});
+
+app.post("/users/edit", async (req, res) => {
+	const { _id, firstname, lastname, username, email, city, group } = req.body;
+
+	let currentID = new mongoose.Types.ObjectId(_id);
+
+	// Validate input
+	if (!username || !email) {
+		return res.status(404).json({
+			success: false,
+			message: "Username and email are required.",
+		});
+	}
+
+	//check if email address already registered in other users
+	const doesUserExit = await JoinRequest.exists({
+		_id: { $ne: currentID },
+		email: email,
+	});
+	if (doesUserExit) {
+		res.status(201).json({
+			success: false,
+			message: "Email address already registered",
+		});
+		return;
+	}
+
+	//check if username already registered in other users
+	const doesUsernameExit = await JoinRequest.exists({
+		_id: { $ne: currentID },
+		username: username,
+	});
+	if (doesUsernameExit) {
+		res.status(201).json({
+			success: false,
+			message: "Username already registered",
+		});
+		return;
 	}
 
 	await JoinRequest.findByIdAndUpdate(_id, req.body, {

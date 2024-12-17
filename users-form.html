@@ -120,6 +120,18 @@
 							/>
 						</div>
 
+						<div id="passwordInputBox" class="mb-3">
+							<label for="password" class="form-label"
+								>Password</label
+							>
+							<input
+								type="text"
+								class="form-control form-control-sm"
+								id="password"
+								name="password"
+							/>
+						</div>
+
 						<div class="mb-3">
 							<label for="email" class="form-label">Email</label>
 							<input
@@ -175,6 +187,7 @@
 				let id = new URL(location.href).searchParams.get("id");
 
 				if (source == "edit") {
+					$("#passwordInputBox").remove();
 					$.ajax({
 						dataType: "json",
 						url: "http://localhost:3000/users/" + id,
@@ -194,14 +207,21 @@
 				}
 
 				$("#dataForm").submit(function (event) {
+					let uri = "http://localhost:3000/users/add";
+					if (source == "edit") {
+						uri = "http://localhost:3000/users/edit";
+					}
 					event.preventDefault();
 					$.ajax({
 						type: "POST",
-						url: "http://localhost:3000/users/edit",
+						url: uri,
 						data: $(this).serialize(),
 						success: function (data) {
 							alert(data.message);
-							window.location.replace("users-all.html");
+
+							if (data.success) {
+								window.location.replace("users-all.html");
+							}
 						},
 						error: function (xhr, status, error) {
 							alert(xhr.responseJSON.message);
