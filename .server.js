@@ -197,22 +197,36 @@ app.post("/login", async (req, res) => {
 	}
 });
 
-app.get("/member/all", async (req, res) => {
+app.get("/users/all", async (req, res) => {
 	//npm i mongoose-paginate-v2
 	try {
 		let email = req.query.email;
+		let pageNumber = req.query.page;
+		let group = req.query.group;
+
+		if (pageNumber === undefined) {
+			pageNumber = 1;
+		}
 
 		let query = {};
 		if (email) {
 			query.email = { $regex: new RegExp(email), $options: "i" };
 		}
 
-		const rs = await JoinRequest.paginate(query, { page: 1, limit: 3 });
+		if (group) {
+			query.group = group;
+		}
+
+		const rs = await JoinRequest.paginate(query, {
+			page: pageNumber,
+			limit: 3,
+		});
 		const rows = rs.docs;
 		let members = [];
 
 		for (var i = 0; i < rows.length; i++) {
 			members[i] = {
+				id: rows[i]._id.toString(),
 				name: rows[i].firstname + " " + rows[i].lastname,
 				username: rows[i].username,
 				email: rows[i].email,
@@ -238,6 +252,83 @@ app.get("/member/all", async (req, res) => {
 	} catch (error) {
 		res.status(500).json({ success: false, message: error.message });
 	}
+});
+
+app.get("/users/:id", async (req, res) => {
+	const id = req.params.id;
+
+	try {
+		const row = await JoinRequest.findById(id);
+		res.status(200).json({
+			success: true,
+			data: row,
+		});
+	} catch (error) {
+		res.status(404).json({
+			success: false,
+			message: error.message,
+		});
+	}
+});
+
+app.post("/users/edit", async (req, res) => {
+	const { _id, firstname, lastname, username, email, city, group } = req.body;
+
+	// Validate input
+	if (!username || !email) {
+		return res.status(404).json({
+			success: false,
+			message: "Username and email are required.",
+		});
+	}
+
+	await JoinRequest.findByIdAndUpdate(_id, req.body, {
+		useFindAndModify: false,
+	})
+		.then((data) => {
+			if (!data) {
+				res.status(404).json({
+					success: false,
+					message: "Member not found.",
+				});
+			} else {
+				res.status(200).json({
+					success: true,
+					message: "Member updated successfully.",
+				});
+			}
+		})
+		.catch((err) => {
+			res.status(500).send({
+				success: false,
+				message: err.message,
+			});
+		});
+});
+
+app.delete("/users/:id", async (req, res) => {
+	const id = req.params.id;
+
+	await JoinRequest.findByIdAndDelete(id)
+		.then((data) => {
+			if (!data) {
+				res.status(404).json({
+					success: false,
+					message: "Member not found",
+				});
+			} else {
+				res.status(200).json({
+					success: true,
+					message: "Member deleted successfully!",
+				});
+			}
+		})
+		.catch((error) => {
+			res.status(500).json({
+				success: false,
+				message: error.message,
+			});
+		});
 });
 
 // Start the server
