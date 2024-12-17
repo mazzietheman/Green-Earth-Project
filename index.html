@@ -18,7 +18,10 @@
         }
     
         .article {
-            margin: 20px 0;
+            margin-top: 200px;
+            margin-left: 200px;
+            max-width: 500PX;
+            
         }
         .join-button {
             display: inline-block;
@@ -26,8 +29,7 @@
             background-color: #4CAF50;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
-            margin-top: 10px;
+            border-radius: 10px;
         }
         .join-button:hover {
             background-color: #45a049;
@@ -40,17 +42,23 @@
             color: white;
             width: 100%;
         }
+
+        #more {display: none;}
+        
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to the Green Earth Project</h1>
+        <h1>Home Page</h1>
         <nav>
             <ul>
                 <li><a href="communitychallenge.html">Community</a></li>
-                <li><a href="join.html">Join Us</a></li>
+                <li><a href="join-bs.html">Join Us</a></li>
                 <li><a href="aboutus.html">About Us</a></li>
                 <li><a href="login.html">login</a></li>
+                <a href="test.html">
+                    <img src="pics/download.pdf" alt="Profile Picture" class="profile-pic">
+                </a>
             </ul>
         </nav>
     </header>
@@ -58,17 +66,36 @@
     <main>
         <section class="article">
             <h2>Join the Movement for a Greener Planet</h2>
-            <img src="pics/greenpower.pdf" alt="Green Earth Project" style="width:100%; max-width:600px;">
-            <p>The Green Earth Project is dedicated to promoting recycling and sustainability in our communities. Our mission is to educate individuals and families on the importance of reducing waste, recycling materials, and adopting sustainable practices that help preserve our planet for future generations.</p>
-            <p>Every year, millions of tons of waste end up in landfills, contributing to pollution and environmental degradation. By participating in our initiatives, you can help reduce waste and make a positive impact on the environment. We offer various programs aimed at different age groups, including workshops, community clean-up events, and educational resources that empower everyone to take action.</p>
-            <p>Our recycling program encourages community members to recycle everyday items such as paper, plastics, and metals. We provide easy-to-follow guidelines on how to properly sort and recycle materials, ensuring that they are processed efficiently. Additionally, we organize monthly recycling drives where you can bring your recyclables to designated locations and learn more about sustainable practices.</p>
-            <p>We believe that small actions can lead to significant changes. By joining the Green Earth Project, you become part of a larger movement that strives to create a cleaner, healthier planet. Together, we can inspire others to take action, raise awareness about environmental issues, and foster a culture of sustainability within our communities.</p>
-            <a href="join.html" class="join-button">Join Now</a>
+            <p>The Green Earth Project is dedicated to promoting recycling and sustainability in our communities. Our mission is to educate individuals and families on the importance of reducing waste, recycling materials, and adopting sustainable practices that help preserve our planet for future generations.<span id="dots">...</span><span id="more">Every year, millions of tons of waste end up in landfills,contributing to pollution and environmental degradation. By participating in our initiatives, you can help reduce waste and make a positive impact on the environment. We offer various programs aimed at different age groups, including workshops, community clean-up events, and educational resources that empower everyone to take action.Our recycling program encourages community members to recycle everyday items such as paper, plastics, and metals. We provide easy-to-follow guidelines on how to properly sort and recycle materials, ensuring that they are processed efficiently. Additionally, we organize monthly recycling drives where you can bring your recyclables to designated locations and learn more about sustainable practices.We believe that small actions can lead to significant changes. By joining the Green Earth Project, you become part of a larger movement that strives to create a cleaner, healthier planet. Together, we can inspire others to take action, raise awareness about environmental issues, and foster a culture of sustainability within our communities.</span></p>
+            <button onclick="myFunction()" id="myBtn">Read more</button>
+            <a href="join-bs.html" class="join-button">Join Now</a>
         </section>
+
+        <div class="green-trees">
+            <img src="pics/OIP.jpg" alt="green-trees" style="width:300px; height:auto; margin-left: 1250px; ">
+        </div>
     </main>
 
     <footer>
         <p>&copy; © 2023 Green Earth Project. All rights reserved</p>
     </footer>
+
+    <script>
+        function myFunction() {
+          var dots = document.getElementById("dots");
+          var moreText = document.getElementById("more");
+          var btnText = document.getElementById("myBtn");
+        
+          if (dots.style.display === "none") {
+            dots.style.display = "inline";
+            btnText.innerHTML = "Read more"; 
+            moreText.style.display = "none";
+          } else {
+            dots.style.display = "none";
+            btnText.innerHTML = "Read less"; 
+            moreText.style.display = "inline";
+          }
+        }
+        </script>
 </body>
 </html>

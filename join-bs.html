@@ -11,7 +11,7 @@
 
 		<nav class="navbar navbar-expand-md navbar-light bg-light" aria-label="Fourth navbar example">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="index.html"> Green Earth Project</a>
+				<a class="navbar-brand" href="index.html"> Green Earth</a>
 				
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
@@ -30,7 +30,7 @@
 							<a href="communitychallenge.html" class="nav-link">Community</a>
 						</li>
 						<li class="nav-item">
-							<a href="join2.html" class="nav-link">Join Us</a>
+							<a href="login.html" class="nav-link">Log In</a>
 						</li>
 
 					</ul>
@@ -70,6 +70,11 @@
 						</div>
 
 						<div class="mb-3">
+							<label class="form-label" for="city">City:</label>
+							<input class="form-control" type="city" id="city" name="city" required>
+						</div>
+
+						<div class="mb-3">
 							<div class="show-password">
 								<input class="form-check-input" type="checkbox" id="showPassword">
 								<label for="showPassword">Show Password</label>
@@ -78,7 +83,7 @@
 						
 						<div class="mb-3">
 							<label class="form-label" for="message">Message:</label>
-							<textarea class="form-control" id="message" name="message" required></textarea>
+							<textarea class="form-control" id="message" name="message"></textarea>
 						</div>
 						
 						<div class="mb-3">
@@ -111,29 +116,29 @@
 						<div class="col-6 col-md-2 mb-3">
 							<h5>Section</h5>
 							<ul class="nav flex-column">
-							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Home</a></li>
-							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Features</a></li>
-							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Pricing</a></li>
-							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">FAQs</a></li>
-							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">About</a></li>
+							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white"></a></li>
+							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white"></a></li>
+							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white"></a></li>
+							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white"></a></li>
+							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white"></a></li>
 							</ul>
 						</div>
 					
 						<div class="col-6 col-md-2 mb-3">
 							<h5>Section</h5>
 							<ul class="nav flex-column">
-							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Home</a></li>
-							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Features</a></li>
-							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">Pricing</a></li>
-							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">FAQs</a></li>
-							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white">About</a></li>
+							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white"></a></li>
+							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white"></a></li>
+							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white"></a></li>
+							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white"></a></li>
+							<li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-white"></a></li>
 							</ul>
 						</div>
 					
 						<div class="col-md-5 offset-md-1 mb-3">
 							<form>
-							<h5>Subscribe to our newsletter</h5>
-							<p>Monthly digest of what's new and exciting from us.</p>
+							<h5></h5>
+							<p></p>
 						
 							</form>
 						</div>
@@ -213,6 +218,52 @@
 				} else {
 					passwordInput.type = 'password'; // Hide password
 				}
+			});
+		</script>
+
+		<script>
+			 document.getElementById('join-form').addEventListener('submit', async function(event) {
+
+			event.preventDefault();
+
+			const username = document.getElementById('username').value;
+			const email = document.getElementById('email').value;
+			const city = document.getElementById('city').value;
+			const password = document.getElementById('password').value;
+			const errorMessage = document.getElementById('error-message');
+
+			// Clear previous error message
+			errorMessage.textContent = '';
+
+			// Check if all fields are filled
+			if (!username || !email || !city || !password) {
+				errorMessage.textContent = 'All fields are required.';
+			} else {
+
+				const formData = new FormData(this);
+				const data = Object.fromEntries(formData.entries());
+
+				const response = await fetch('http://localhost:3000/join', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Accept': 'application/json',
+					},
+					body: JSON.stringify(data),
+				})
+				.then(function (response) {
+					return response.json();
+				})
+				.then(function (res) {
+					if(res.success){
+						alert('Thank you for joining us! Please verify your email.');
+						localStorage.setItem('email', data.email); // Store email in local storage
+						window.location.href = 'verify.html'; // Redirect to verify.html
+					} else {
+						alert(res.message);
+					}
+				})
+			}
 			});
 		</script>
 	

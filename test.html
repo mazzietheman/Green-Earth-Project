@@ -1,1 +1,308 @@
-<a href="join.html" class="join-button">Join Now</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>User Profile with Transaction Log</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f1f3f8;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Container for the Profile */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background-color: green;
+            color: white;
+            width: 250px;
+            padding: 20px;
+            box-sizing: border-box;
+            position: fixed;
+            height: 100%;
+        }
+
+        .sidebar h2 {
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 20px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar ul li a:hover {
+            color: #4CAF50;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            flex-grow: 1;
+            margin-left: 250px;
+            padding: 40px;
+            background-color: #fff;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-header h1 {
+            font-size: 2.5em;
+            color: #2C3E50;
+        }
+
+        .profile-header p {
+            font-size: 1.2em;
+            color: #7f8c8d;
+        }
+
+        /* Profile Info */
+        .profile-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 40px;
+        }
+
+        .profile-info div {
+            text-align: center;
+        }
+
+        .profile-info h3 {
+            font-size: 1.4em;
+            color: #2C3E50;
+        }
+
+        .profile-info p {
+            font-size: 1.1em;
+            color: #95a5a6;
+        }
+
+        /* Transaction Log */
+        .transaction-log {
+            margin-top: 40px;
+        }
+
+        .transaction-log h2 {
+            font-size: 2em;
+            color: #2C3E50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        th {
+            background-color: green;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #ecf0f1;
+        }
+
+        tr:hover {
+            background-color: #d6eaf8;
+            cursor: pointer;
+        }
+
+        /* Add Transaction Button */
+        .add-transaction-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .add-transaction-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Total Amount Section */
+        .total-amount {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2C3E50;
+            text-align: right;
+            margin-top: 20px;
+            padding-right: 10%;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+                padding: 10px;
+            }
+
+            .profile-section {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .profile-info {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-info div {
+                margin-bottom: 20px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>User Dashboard</h2>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#">Account Settings</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="profile-section">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <h1>Welcome, John Doe!</h1>
+            <p>Your Profile & Transaction Log</p>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="profile-info">
+            <div>
+                <h3>Account ID</h3>
+                <p>123456789</p>
+            </div>
+            <div>
+                <h3>Email</h3>
+                <p>johndoe@example.com</p>
+            </div>
+            <div>
+                <h3>Balance</h3>
+                <p>$1,234.56</p>
+            </div>
+        </div>
+
+        <!-- Transaction Log Section -->
+        <div class="transaction-log">
+            <h2>Transaction History</h2>
+
+            <!-- Transaction Table -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>TXN1001</td>
+                        <td>2024-12-01</td>
+                        <td>$500.00</td>
+                        <td>Deposit</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>TXN1002</td>
+                        <td>2024-12-05</td>
+                        <td>$200.00</td>
+                        <td>Withdrawal</td>
+                        <td>Pending</td>
+                    </tr>
+                    <tr>
+                        <td>TXN1003</td>
+                        <td>2024-12-10</td>
+                        <td>$50.00</td>
+                        <td>Transfer</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>TXN1004</td>
+                        <td>2024-12-12</td>
+                        <td>$300.00</td>
+                        <td>Deposit</td>
+                        <td>Completed</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Total Amount -->
+            <div class="total-amount">
+                Total Amount: $1,050.00
+            </div>
+
+            <!-- Add Transaction Button -->
+            <button class="add-transaction-btn">Add New Transaction</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+    const table = document.querySelector('table');
+    let totalAmount = 0;
+
+    // Loop through each row in the table and sum the transaction amounts
+    table.querySelectorAll('tbody tr').for }
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+</script>
+
+</body>
+</html>

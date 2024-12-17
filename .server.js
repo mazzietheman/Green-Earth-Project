@@ -22,8 +22,6 @@ mongoose.connect("mongodb://localhost:27017/recycle_project", {}).then(() => {
 
 // Define a schema and model for join requests
 const joinSchema = new mongoose.Schema({
-    firstname: String,
-    lastname: String,
     username: String,
     email: String,
     password: String,
@@ -44,10 +42,10 @@ const transporter = nodemailer.createTransport({
 // Route to handle join requests
 app.post('/join', async (req, res) => {
 
-    const { firstname, lastname, username, email, city, password } = req.body;
+    const {username, email, city, password } = req.body;
 
     // Validate input (add your validation logic here)
-    if (!firstname || !lastname || !username || !email || !city || !password) {
+    if ( !username || !email || !city || !password) {
         return res.status(400).json({ success:false, message: 'All fields are required.' });
     }
 
@@ -69,8 +67,6 @@ app.post('/join', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newJoinRequest = new JoinRequest({
-        firstname,
-        lastname,
         username,
         email,
         password: hashedPassword,
@@ -159,7 +155,4 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+

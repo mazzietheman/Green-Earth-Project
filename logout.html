@@ -16,5 +16,14 @@
         // Clear the loggedIn status
         localStorage.removeItem('loggedIn');
     </script>
+    <script>
+        function logout() {
+    localStorage.removeItem('loggedIn'); // Clear the logged-in status
+    window.location.href = 'login.html'; // Redirect to login page
+}
+
+
+    <a href="#" id="logout" onclick="logout()">Logout</a>
+    </script>
 </body>
 </html>

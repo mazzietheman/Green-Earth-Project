@@ -17,6 +17,7 @@ header {
     text-align: center   ; /* Center the header text */
 }
 
+
 nav ul {
     display: flex; /* Flexbox for horizontal layout */
     justify-content: right; /* Center the links */
@@ -40,6 +41,38 @@ nav ul li a:hover {
     background-color: #45a049; /* Hover effect */
 }
 
+.profile-pic {
+    width: 50px; /* Adjust the size as needed */
+    height: 50px; /* Adjust the size as needed */
+    border-radius: 50%; /* Makes the image circular */
+    margin-right: 15px; /* Space between the image and text */
+    cursor: pointer; /* Changes cursor to pointer on hover */
+}
+
+links ul li a {
+    font-size: large;
+    color: black; /* Link color */
+    text-decoration: none; /* Remove underline */
+    padding: 10px 15px; /* Padding around links */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+links ul li {
+    margin: 0 15px; /* Space between links */
+}
+
+links ul {
+    display: flex; /* Flexbox for horizontal layout */
+    justify-content: right; /* Center the links */
+    padding: 0; /* Remove default padding */
+}
+
+links ul li a:hover {
+    background-color: #45a049; /* Hover effect */
+}
+
+
 .article {
     background: white; /* White background for article sections */
     padding: 20px; /* Padding inside articles */
@@ -59,7 +92,7 @@ footer {
     color: white;
     bottom: auto;
     width: 100%;
-    margin-bottom: auto;
+    margin-bottom: 0;
   }
 
 .stack {
@@ -199,4 +232,44 @@ input[type="checkbox"]{
     color: #4CAF50;
     background-color: #fff;
     cursor: pointer;
+}
+
+.profile-container {
+    position: relative; /* Position relative for dropdown positioning */
+    display: inline-block; /* Aligns the profile picture and dropdown */
+}
+
+.dropdown {
+    display: inline-block; /* Aligns dropdown with profile picture */
+}
+
+.dropbtn {
+    background-color: transparent; /* Transparent background */
+    border: none; /* No border */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 16px; /* Font size for dropdown button */
+}
+
+.dropdown-content {
+    display: none; /* Hidden by default */
+    position: absolute; /* Position it below the button */
+    background-color: white; /* Background color */
+    min-width: 100px; /* Minimum width */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Shadow effect */
+    z-index: 1; /* Ensure it appears above other elements */
+}
+
+.profile-container:hover .dropdown-content {
+    display: block; /* Show dropdown on hover */
+}
+
+.dropdown-content a {
+    color: black; /* Text color */
+    padding: 12px 16px; /* Padding for links */
+    text-decoration: none; /* No underline */
+    display: block; /* Block display for links */
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1; /* Background color on hover */
 }
