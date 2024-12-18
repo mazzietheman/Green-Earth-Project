@@ -137,6 +137,24 @@
 					moreText.style.display = "inline";
 				}
 			}
+
+			window.addEventListener("load", async function (event) {
+				const token = localStorage.getItem("token");
+
+				const response = await fetch(
+					"http://localhost:3000/test_login",
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: "Bearer " + token,
+						},
+					}
+				);
+
+				const data = await response.json();
+				console.log(data);
+			});
 		</script>
 	</body>
 </html>

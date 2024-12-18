@@ -209,6 +209,48 @@ app.post("/login", async (req, res) => {
 	}
 });
 
+const tokenCheck = (allowedGroup) => {
+	return async (req, res, next) => {
+		let tokenString = "";
+		if (
+			req.headers.authorization &&
+			req.headers.authorization.split(" ")[0] === "Bearer"
+		) {
+			tokenString = req.headers.authorization.split(" ")[1];
+		}
+
+		if (tokenString) {
+			const user = await JoinRequest.findOne({ token: tokenString });
+			console.log(user.group);
+
+			if (allowedGroup.includes(user.group)) {
+				next();
+			} else {
+				return res.status(403).send({
+					success: false,
+					message: "Unauthorized group",
+				});
+			}
+		} else {
+			return res.status(403).send({
+				success: false,
+				message: "Unauthorized",
+			});
+		}
+	};
+};
+
+app.get(
+	"/test_login",
+	tokenCheck(["member", "kiosk", "plant", "administrator"]),
+	async function (req, res) {
+		return res.status(200).send({
+			success: true,
+			message: "Yes you loged in",
+		});
+	}
+);
+
 // Start the server
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`);
