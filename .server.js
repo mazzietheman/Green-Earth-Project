@@ -198,7 +198,6 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/users/all", async (req, res) => {
-	//npm i mongoose-paginate-v2
 	try {
 		let email = req.query.email;
 		let pageNumber = req.query.page;
@@ -219,7 +218,7 @@ app.get("/users/all", async (req, res) => {
 
 		const rs = await JoinRequest.paginate(query, {
 			page: pageNumber,
-			limit: 3,
+			limit: 10,
 		});
 		const rows = rs.docs;
 		let members = [];
@@ -351,7 +350,7 @@ app.post("/users/edit", async (req, res) => {
 	if (doesUserExit) {
 		res.status(201).json({
 			success: false,
-			message: "Email address already registered",
+			message: "Email address already registered in other users",
 		});
 		return;
 	}
@@ -364,7 +363,7 @@ app.post("/users/edit", async (req, res) => {
 	if (doesUsernameExit) {
 		res.status(201).json({
 			success: false,
-			message: "Username already registered",
+			message: "Username already registered in other users",
 		});
 		return;
 	}
