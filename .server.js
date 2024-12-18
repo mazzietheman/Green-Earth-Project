@@ -219,9 +219,8 @@ const tokenCheck = (allowedGroup) => {
 			tokenString = req.headers.authorization.split(" ")[1];
 		}
 
-		if (tokenString) {
+		try {
 			const user = await JoinRequest.findOne({ token: tokenString });
-			console.log(user.group);
 
 			if (allowedGroup.includes(user.group)) {
 				next();
@@ -231,7 +230,7 @@ const tokenCheck = (allowedGroup) => {
 					message: "Unauthorized group",
 				});
 			}
-		} else {
+		} catch (err) {
 			return res.status(403).send({
 				success: false,
 				message: "Unauthorized",

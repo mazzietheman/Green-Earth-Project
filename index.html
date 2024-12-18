@@ -63,7 +63,9 @@
 					<li><a href="communitychallenge.html">Community</a></li>
 					<li><a href="join.html">Join Us</a></li>
 					<li><a href="aboutus.html">About Us</a></li>
-					<li><a href="login.html">login</a></li>
+					<li>
+						<a href="#" onclick="logout();return false;">Log Out</a>
+					</li>
 					<a href="test.html">
 						<img
 							src="pics/download.pdf"
@@ -153,8 +155,16 @@
 				);
 
 				const data = await response.json();
-				console.log(data);
+				if (!data.success) {
+					window.location.href = "login.html";
+				}
 			});
+
+			function logout() {
+				localStorage.removeItem("loggedIn");
+				localStorage.removeItem("token");
+				location.reload();
+			}
 		</script>
 	</body>
 </html>
