@@ -25,11 +25,15 @@ mongoose
 
 // Define a schema and model for join requests
 const joinSchema = new mongoose.Schema({
+	firstname: String,
+	lastname: String,
 	username: String,
 	email: String,
 	password: String,
 	vcode: String,
 	city: String,
+	group: String,
+	token: String,
 });
 
 const JoinRequest = mongoose.model("JoinRequest", joinSchema);
@@ -44,7 +48,7 @@ const transporter = nodemailer.createTransport({
 
 // Route to handle join requests
 app.post("/join", async (req, res) => {
-	const { username, email, city, password } = req.body;
+	const { firstname, lastname, username, email, city, password } = req.body;
 
 	// Validate input (add your validation logic here)
 	if (!username || !email || !city || !password) {
@@ -77,11 +81,14 @@ app.post("/join", async (req, res) => {
 	const hashedPassword = await bcrypt.hash(password, 10);
 
 	const newJoinRequest = new JoinRequest({
+		firstname,
+		lastname,
 		username,
 		email,
 		password: hashedPassword,
 		vcode: "",
 		city,
+		group: "member",
 	});
 
 	try {
@@ -182,9 +189,23 @@ app.post("/login", async (req, res) => {
 		}
 
 		// Successful login
-		res.status(200).json({ message: "Login successful!" });
+		try {
+			var tokenString = require("crypto").randomBytes(64).toString("hex");
+			await JoinRequest.findOneAndUpdate(
+				{ _id: user._id },
+				{ $set: { token: tokenString } },
+				{ new: true }
+			);
+		} catch (error) {
+			res.status(500).json({ error: error.message });
+		}
+
+		res.status(200).json({
+			message: "Login successful!",
+			token: tokenString,
+		});
 	} catch (error) {
-		res.status(500).json({ error: "An error occurred during login." });
+		res.status(500).json({ error: error.message });
 	}
 });
 
