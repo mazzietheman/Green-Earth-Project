@@ -5,6 +5,7 @@ document
 
 		const username = document.getElementById("username").value;
 		const password = document.getElementById("password").value;
+		const message = document.getElementById("error-message");
 
 		try {
 			const response = await fetch("http://localhost:3000/login", {
@@ -20,6 +21,7 @@ document
 			if (response.ok) {
 				// Set loggedIn status in local storage
 				localStorage.setItem("loggedIn", "true");
+				localStorage.setItem("token", data.token);
 				// Redirect to index page
 				window.location.href = "index.html";
 			} else {
