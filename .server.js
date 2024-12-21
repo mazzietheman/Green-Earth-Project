@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
 
 // Connect to MongoDB
 mongoose
@@ -35,6 +37,8 @@ const joinSchema = new mongoose.Schema({
 	group: String,
 	token: String,
 });
+
+joinSchema.plugin(mongoosePaginate);
 
 const JoinRequest = mongoose.model("JoinRequest", joinSchema);
 
@@ -223,6 +227,7 @@ const tokenCheck = (allowedGroup) => {
 			const user = await JoinRequest.findOne({ token: tokenString });
 
 			if (allowedGroup.includes(user.group)) {
+				req.username = user.username;
 				next();
 			} else {
 				return res.status(403).send({
@@ -245,12 +250,245 @@ app.get(
 	async function (req, res) {
 		return res.status(200).send({
 			success: true,
+			username: req.username,
 			message: "Yes you loged in",
 		});
 	}
 );
 
+app.get(
+	"/member_qr_code_url",
+	tokenCheck(["member"]),
+	async function (req, res) {
+		const username = req.username;
+		return res.status(200).send({
+			success: true,
+			code: username,
+		});
+	}
+);
+
+app.get("/users/all", async (req, res) => {
+	try {
+		let email = req.query.email;
+		let pageNumber = req.query.page;
+		let group = req.query.group;
+
+		if (pageNumber === undefined) {
+			pageNumber = 1;
+		}
+
+		let query = {};
+		if (email) {
+			query.email = { $regex: new RegExp(email), $options: "i" };
+		}
+
+		if (group) {
+			query.group = group;
+		}
+
+		const rs = await JoinRequest.paginate(query, {
+			page: pageNumber,
+			limit: 10,
+		});
+		const rows = rs.docs;
+		let members = [];
+
+		for (var i = 0; i < rows.length; i++) {
+			members[i] = {
+				id: rows[i]._id.toString(),
+				name: rows[i].firstname + " " + rows[i].lastname,
+				username: rows[i].username,
+				email: rows[i].email,
+				city: rows[i].city,
+				group: rows[i].group,
+			};
+		}
+
+		const r = {
+			rows: members,
+			totalDocs: rs.totalDocs,
+			limit: rs.limit,
+			totalPages: rs.totalPages,
+			page: rs.age,
+			pagingCounter: rs.pagingCounter,
+			hasPrevPage: rs.hasPrevPage,
+			hasNextPage: rs.hasNextPage,
+			prevPage: rs.prevPage,
+			nextPage: rs.nextPage,
+		};
+
+		res.status(200).json({ success: true, data: r });
+	} catch (error) {
+		res.status(500).json({ success: false, message: error.message });
+	}
+});
+
+app.get("/users/:id", async (req, res) => {
+	const id = req.params.id;
+
+	try {
+		const row = await JoinRequest.findById(id);
+		res.status(200).json({
+			success: true,
+			data: row,
+		});
+	} catch (error) {
+		res.status(404).json({
+			success: false,
+			message: error.message,
+		});
+	}
+});
+
+app.post("/users/add", async (req, res) => {
+	const { firstname, lastname, username, email, city, group, password } =
+		req.body;
+
+	// Validate input
+	if (!username || !email) {
+		return res.status(404).json({
+			success: false,
+			message: "Username and email are required.",
+		});
+	}
+
+	//check if email address already registered
+	const doesUserExit = await JoinRequest.exists({ email: email });
+	if (doesUserExit) {
+		res.status(201).json({
+			success: false,
+			message: "Email address already registered",
+		});
+		return;
+	}
+
+	//check if username already registered
+	const doesUsernameExit = await JoinRequest.exists({ username: username });
+	if (doesUsernameExit) {
+		res.status(201).json({
+			success: false,
+			message: "Username already registered",
+		});
+		return;
+	}
+
+	// Hash the password before saving (use bcrypt or similar)
+	const hashedPassword = await bcrypt.hash(password, 10);
+
+	const newJoinRequest = new JoinRequest({
+		firstname,
+		lastname,
+		username,
+		email,
+		city,
+		group,
+		password: hashedPassword,
+	});
+
+	try {
+		await newJoinRequest.save();
+		res.status(200).json({
+			success: true,
+			message: "Member inserted successfully.",
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: true,
+			error: "An error occurred while saving your request.",
+		});
+	}
+});
+
+app.post("/users/edit", async (req, res) => {
+	const { _id, firstname, lastname, username, email, city, group } = req.body;
+
+	let currentID = new mongoose.Types.ObjectId(_id);
+
+	// Validate input
+	if (!username || !email) {
+		return res.status(404).json({
+			success: false,
+			message: "Username and email are required.",
+		});
+	}
+
+	//check if email address already registered in other users
+	const doesUserExit = await JoinRequest.exists({
+		_id: { $ne: currentID },
+		email: email,
+	});
+	if (doesUserExit) {
+		res.status(201).json({
+			success: false,
+			message: "Email address already registered in other users",
+		});
+		return;
+	}
+
+	//check if username already registered in other users
+	const doesUsernameExit = await JoinRequest.exists({
+		_id: { $ne: currentID },
+		username: username,
+	});
+	if (doesUsernameExit) {
+		res.status(201).json({
+			success: false,
+			message: "Username already registered in other users",
+		});
+		return;
+	}
+
+	await JoinRequest.findByIdAndUpdate(_id, req.body, {
+		useFindAndModify: false,
+	})
+		.then((data) => {
+			if (!data) {
+				res.status(404).json({
+					success: false,
+					message: "Member not found.",
+				});
+			} else {
+				res.status(200).json({
+					success: true,
+					message: "Member updated successfully.",
+				});
+			}
+		})
+		.catch((err) => {
+			res.status(500).send({
+				success: false,
+				message: err.message,
+			});
+		});
+});
+
+app.delete("/users/:id", async (req, res) => {
+	const id = req.params.id;
+
+	await JoinRequest.findByIdAndDelete(id)
+		.then((data) => {
+			if (!data) {
+				res.status(404).json({
+					success: false,
+					message: "Member not found",
+				});
+			} else {
+				res.status(200).json({
+					success: true,
+					message: "Member deleted successfully!",
+				});
+			}
+		})
+		.catch((error) => {
+			res.status(500).json({
+				success: false,
+				message: error.message,
+			});
+		});
+});
+
 // Start the server
 app.listen(PORT, () => {
-	console.log(`Server is running on http://localhost:${PORT}`);
+	console.log(`Server is running on http://127.0.0.1:${PORT}`);
 });

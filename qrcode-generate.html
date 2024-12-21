@@ -17,24 +17,24 @@
 			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
 			crossorigin="anonymous"
 		></script>
+
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+			crossorigin="anonymous"
+		></script>
 	</head>
 
 	<body>
 		<div class="container">
-			<div class="card my-3">
-				<div class="card-header">Search Form</div>
-				<div class="card-body">
-					<button
-						id="generatecode"
-						class="btn btn-primary btn-success"
-					>
-						Generate QR Code
-					</button>
-				</div>
-			</div>
+			<div id="qrcode"></div>
+
+			<button id="generatecode" class="btn btn-primary btn-success">
+				Generate QR Code
+			</button>
 		</div>
 
 		<script>
+			var username = "";
 			window.addEventListener("load", async function (event) {
 				const token = localStorage.getItem("token");
 
@@ -52,12 +52,33 @@
 				const data = await response.json();
 				if (!data.success) {
 					window.location.href = "login.html";
+				} else {
+					username = data.username;
 				}
 			});
 
 			$(function () {
-				$("#generatecode").on("click", function (event) {
-					alert("ssssssssss");
+				$("#generatecode").on("click", async function (event) {
+					$("#qrcode").html("");
+
+					const token = localStorage.getItem("token");
+
+					const response = await fetch(
+						"http://localhost:3000/member_qr_code_url",
+						{
+							method: "GET",
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: "Bearer " + token,
+							},
+						}
+					);
+
+					const data = await response.json();
+
+					console.log(data);
+
+					var qrcode = new QRCode("qrcode", data.code);
 				});
 			});
 		</script>
