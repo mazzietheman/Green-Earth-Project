@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller's Transaction Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4CAF50;
+            padding: 10px 20px;
+            color: white;
+        }
+        .navbar .links {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar .links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 5px 10px;
+        }
+        .navbar .links a:hover {
+            background-color: #45a049;
+            border-radius: 5px;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .profile {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #ddd;
+        }
+        .profile img {
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            margin-right: 20px;
+        }
+        .profile .welcome {
+            font-size: 1.4rem;
+            color: #333;
+        }
+        .search {
+            padding: 20px;
+            background-color: #f7f7f7;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+        .search input {
+            flex: 1;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .search button:hover {
+            background-color: #45a049;
+        }
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .transaction-table th, .transaction-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .transaction-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .summary {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #f4f4f4;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+        }
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #eaeaea;
+            border-top: 1px solid #ddd;
+        }
+        .footer button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .footer button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">Recycling Project</div>
+        <div class="links">
+            <a href="index.html">Home</a>
+            <a href="aboutus.html">About Us</a>
+            <a href="communitychallenge.html">Communities</a>
+            <a href="join.html">Join Us</a>
+            <a href="login.html">Login</a>
+            
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            Seller's Transaction Page
+        </div>
+        <div class="profile">
+            <img src="pics/download.pdf"Profile Picture">
+            <div class="welcome">Hi Cayden,<br>Let's keep on recycling!</div>
+        </div>
+        <div class="search">
+            <input type="date" placeholder="From">
+            <input type="date" placeholder="To">
+            <button>Search Transactions</button>
+        </div>
+        <table class="transaction-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>07 Nov 2024</td>
+                    <td>Bottles</td>
+                    <td>300g</td>
+                    <td>Rp50,000</td>
+                </tr>
+                <tr>
+                    <td>14 Nov 2024</td>
+                    <td>Bottles</td>
+                    <td>300g</td>
+                    <td>Rp50,000</td>
+                </tr>
+                <tr>
+                    <td>21 Nov 2024</td>
+                    <td>Bottles</td>
+                    <td>300g</td>
+                    <td>Rp50,000</td>
+                </tr>
+                <tr>
+                    <td>28 Nov 2024</td>
+                    <td>Bottles</td>
+                    <td>300g</td>
+                    <td>Rp50,000</td>
+                </tr>
+                <tr>
+                    <td>30 Nov 2024</td>
+                    <td>Bottles</td>
+                    <td>300g</td>
+                    <td>Rp50,000</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="summary">
+            <div>Total Weight: 1500g</div>
+            <div>Total Amount: Rp250,000</div>
+        </div>
+        <div class="footer">
+            <button>Log Out</button>
+        </div>
+    </div>
+</body>
+</html>
