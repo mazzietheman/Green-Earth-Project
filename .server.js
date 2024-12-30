@@ -488,6 +488,240 @@ app.delete("/users/:id", async (req, res) => {
 		});
 });
 
+//product-------------------------------------------------------------------
+// Define a schema and model for join requests
+const productSchema = new mongoose.Schema({
+	name: String,
+	price: Number,
+});
+
+productSchema.plugin(mongoosePaginate);
+
+const Products = mongoose.model("Products", productSchema);
+
+app.get("/product/all", async (req, res) => {
+	try {
+		let name = req.query.name;
+		let pageNumber = req.query.page;
+
+		if (pageNumber === undefined) {
+			pageNumber = 1;
+		}
+
+		let query = {};
+		if (name) {
+			query.name = { $regex: new RegExp(email), $options: "i" };
+		}
+
+		const rs = await Products.paginate(query, {
+			page: pageNumber,
+			limit: 10,
+		});
+		const rows = rs.docs;
+		let data = [];
+
+		for (var i = 0; i < rows.length; i++) {
+			data[i] = {
+				id: rows[i]._id.toString(),
+				name: rows[i].name,
+				price: rows[i].price,
+			};
+		}
+
+		const r = {
+			rows: data,
+			totalDocs: rs.totalDocs,
+			limit: rs.limit,
+			totalPages: rs.totalPages,
+			page: rs.age,
+			pagingCounter: rs.pagingCounter,
+			hasPrevPage: rs.hasPrevPage,
+			hasNextPage: rs.hasNextPage,
+			prevPage: rs.prevPage,
+			nextPage: rs.nextPage,
+		};
+
+		res.status(200).json({ success: true, data: r });
+	} catch (error) {
+		res.status(500).json({ success: false, message: error.message });
+	}
+});
+
+app.get("/product/:id", async (req, res) => {
+	const id = req.params.id;
+
+	try {
+		const row = await Products.findById(id);
+		res.status(200).json({
+			success: true,
+			data: row,
+		});
+	} catch (error) {
+		res.status(404).json({
+			success: false,
+			message: error.message,
+		});
+	}
+});
+
+app.post("/product/add", async (req, res) => {
+	const { name, price } = req.body;
+
+	// Validate input
+	if (!name || !price) {
+		return res.status(404).json({
+			success: false,
+			message: "Name and price are required.",
+		});
+	}
+
+	const newProduct = new Products({
+		name: name,
+		price: price,
+	});
+
+	try {
+		await newProduct.save();
+		res.status(200).json({
+			success: true,
+			message: "Product inserted successfully.",
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: true,
+			error: "An error occurred while saving your request.",
+		});
+	}
+});
+
+app.post("/product/edit", async (req, res) => {
+	const { _id, name, price } = req.body;
+
+	// Validate input
+	if (!name || !price) {
+		return res.status(404).json({
+			success: false,
+			message: "Name and price are required.",
+		});
+	}
+
+	await Products.findByIdAndUpdate(_id, req.body, {
+		useFindAndModify: false,
+	})
+		.then((data) => {
+			if (!data) {
+				res.status(404).json({
+					success: false,
+					message: "Product not found.",
+				});
+			} else {
+				res.status(200).json({
+					success: true,
+					message: "Product updated successfully.",
+				});
+			}
+		})
+		.catch((err) => {
+			res.status(500).send({
+				success: false,
+				message: err.message,
+			});
+		});
+});
+
+app.delete("/product/:id", async (req, res) => {
+	const id = req.params.id;
+
+	await Products.findByIdAndDelete(id)
+		.then((data) => {
+			if (!data) {
+				res.status(404).json({
+					success: false,
+					message: "Product not found",
+				});
+			} else {
+				res.status(200).json({
+					success: true,
+					message: "Product deleted successfully!",
+				});
+			}
+		})
+		.catch((error) => {
+			res.status(500).json({
+				success: false,
+				message: error.message,
+			});
+		});
+});
+
+//-------------------------------------------------------------------
+const receiveGoodsSchema = new mongoose.Schema(
+	{
+		kiosk: joinSchema,
+		member: joinSchema,
+		product: productSchema,
+		weight: Number,
+		kioskUsername: String,
+		memberUsername: String,
+		subTotalPrice: Number,
+	},
+	{ timestamps: true }
+);
+
+receiveGoodsSchema.plugin(mongoosePaginate);
+
+const ReceiveGoods = mongoose.model("ReceiveGoods", receiveGoodsSchema);
+
+app.post(
+	"/receive_goods/add",
+	tokenCheck(["kiosk", "administrator"]),
+	async (req, res) => {
+		const { memberUsername, idProduct, weight } = req.body;
+		const kioskUsername = req.username;
+		try {
+			const member = await JoinRequest.findOne({
+				username: memberUsername,
+			});
+
+			const kiosk = await JoinRequest.findOne({
+				username: kioskUsername,
+			});
+
+			const product = await Products.findById(idProduct);
+
+			let totalPrice = product.price * weight;
+
+			const newReceiveGoods = new ReceiveGoods({
+				kiosk: kiosk,
+				member: member,
+				product: product,
+				weight: weight,
+				kioskUsername: kioskUsername,
+				memberUsername: memberUsername,
+				subTotalPrice: totalPrice,
+			});
+
+			try {
+				await newReceiveGoods.save();
+				res.status(200).json({
+					success: true,
+					message: "Product received",
+				});
+			} catch (error) {
+				res.status(500).json({
+					success: true,
+					error: "An error occurred while saving your request.",
+				});
+			}
+		} catch (error) {
+			res.status(404).json({
+				success: false,
+				message: error.message,
+			});
+		}
+	}
+);
+
 // Start the server
 app.listen(PORT, () => {
 	console.log(`Server is running on http://127.0.0.1:${PORT}`);
