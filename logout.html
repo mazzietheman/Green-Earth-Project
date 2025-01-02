@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logout</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="logout-container">
-        <h2>You have been logged out.</h2>
-        <a href="login.html">Login Again</a>
-    </div>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Logout</title>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<div class="logout-container">
+			<h2>You have been logged out.</h2>
+			<a href="login.html">Login Again</a>
+		</div>
 
-    <script>
-        // Clear the loggedIn status
-        localStorage.removeItem('loggedIn');
-    </script>
-    <script>
-        function logout() {
-    localStorage.removeItem('loggedIn'); // Clear the logged-in status
-    window.location.href = 'login.html'; // Redirect to login page
-}
+		<script>
+			// Clear the loggedIn status
+			localStorage.removeItem("loggedIn");
+			localStorage.removeItem("token");
+		</script>
+		<script>
+			function logout() {
+				localStorage.removeItem("loggedIn"); // Clear the logged-in status
+				localStorage.removeItem("token");
+				window.location.href = "login.html"; // Redirect to login page
+			}
 
-
-    <a href="#" id="logout" onclick="logout()">Logout</a>
-    </script>
-</body>
+			<a href="#" id="logout" onclick="logout()">
+				Logout
+			</a>;
+		</script>
+	</body>
 </html>
