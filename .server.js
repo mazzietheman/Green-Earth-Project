@@ -5,6 +5,8 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const mongoosePaginate = require("mongoose-paginate-v2");
+const QRCode = require('qrcode');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -46,7 +48,7 @@ const transporter = nodemailer.createTransport({
 	service: "gmail", // Use your email service provider
 	auth: {
 		user: "mazzie8079@gmail.com", // Your email address
-		pass: "ygpj nqzt aldd tatj", // Your email password or app password
+		pass: "tazc bqef favo ukf", // Your email password or app password
 	},
 });
 
@@ -397,47 +399,8 @@ app.post("/users/add", async (req, res) => {
 			success: true,
 			error: "An error occurred while saving your request.",
 		});
-	}
+	}	
 });
-
-app.post("/users/edit", async (req, res) => {
-	const { _id, firstname, lastname, username, email, city, group } = req.body;
-
-	let currentID = new mongoose.Types.ObjectId(_id);
-
-	// Validate input
-	if (!username || !email) {
-		return res.status(404).json({
-			success: false,
-			message: "Username and email are required.",
-		});
-	}
-
-	//check if email address already registered in other users
-	const doesUserExit = await JoinRequest.exists({
-		_id: { $ne: currentID },
-		email: email,
-	});
-	if (doesUserExit) {
-		res.status(201).json({
-			success: false,
-			message: "Email address already registered in other users",
-		});
-		return;
-	}
-
-	//check if username already registered in other users
-	const doesUsernameExit = await JoinRequest.exists({
-		_id: { $ne: currentID },
-		username: username,
-	});
-	if (doesUsernameExit) {
-		res.status(201).json({
-			success: false,
-			message: "Username already registered in other users",
-		});
-		return;
-	}
 
 	await JoinRequest.findByIdAndUpdate(_id, req.body, {
 		useFindAndModify: false,
@@ -461,7 +424,6 @@ app.post("/users/edit", async (req, res) => {
 				message: err.message,
 			});
 		});
-});
 
 app.delete("/users/:id", async (req, res) => {
 	const id = req.params.id;
@@ -487,6 +449,108 @@ app.delete("/users/:id", async (req, res) => {
 			});
 		});
 });
+
+
+// Schemas
+const GoodsSchema = new mongoose.Schema({
+    qrCode: String,
+    sellerId: mongoose.Schema.Types.ObjectId,
+    type: String,
+    weight: Number,
+    status: { type: String, default: 'Pending' },
+    price: Number,
+});
+const Goods = mongoose.model('Goods', GoodsSchema);
+
+const SellerSchema = new mongoose.Schema({
+    username: String,
+    password: String,
+    balance: { type: Number, default: 0 },
+});
+const Seller = mongoose.model('Seller', SellerSchema);
+
+const PaymentSchema = new mongoose.Schema({
+    goodsId: mongoose.Schema.Types.ObjectId,
+    amount: Number,
+    status: { type: String, default: 'Pending' },
+});
+const Payment = mongoose.model('Payment', PaymentSchema);
+
+// Seller Login
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    const seller = await Seller.findOne({ username });
+
+    if (seller && seller.password === password) { // Simplified for example purposes
+        const token = jwt.sign({ id: seller._id }, 'secretkey', { expiresIn: '1h' });
+        return res.json({ message: "Login successful", token });
+    }
+
+    return res.status(401).json({ message: "Invalid credentials" });
+});
+
+// Generate QR Code
+app.post('/generate-qr', async (req, res) => {
+    const { sellerId, type, weight } = req.body;
+    const goods = new Goods({ sellerId, type, weight });
+    await goods.save();
+
+    const qrCode = await QRCode.toDataURL(goods._id.toString());
+    res.json({ qrCode });
+});
+
+// Scan QR Code
+app.post('/scan-qr', async (req, res) => {
+    const { qrCode } = req.body;
+    const goods = await Goods.findById(qrCode);
+
+    if (goods) {
+        return res.json({ message: "QR code verified", goods });
+    }
+
+    return res.status(404).json({ message: "Invalid QR code. Please re-scan." });
+});
+
+// Finalize Process
+app.post('/finalize', async (req, res) => {
+    const { goodsId, price } = req.body;
+    const goods = await Goods.findById(goodsId);
+
+    if (!goods) {
+        return res.status(404).json({ message: "Goods not found." });
+    }
+
+    goods.status = 'Accepted';
+    goods.price = price;
+    await goods.save();
+
+    res.json({ message: "Goods finalized", goods });
+});
+
+// Process Payment
+app.post('/process-payment', async (req, res) => {
+    const { goodsId } = req.body;
+    const goods = await Goods.findById(goodsId);
+
+    if (!goods) {
+        return res.status(404).json({ message: "Goods not found." });
+    }
+
+    const seller = await Seller.findById(goods.sellerId);
+    const payment = new Payment({ goodsId, amount: goods.price });
+
+    if (seller) {
+        seller.balance += goods.price;
+        await seller.save();
+        payment.status = 'Completed';
+        await payment.save();
+
+        return res.json({ message: "Payment processed successfully", payment });
+    }
+
+    return res.status(500).json({ message: "Payment processing failed." });
+});
+
 
 // Start the server
 app.listen(PORT, () => {

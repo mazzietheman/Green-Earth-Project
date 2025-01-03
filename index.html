@@ -54,27 +54,17 @@
 				display: none;
 			}
 		</style>
+		<script
+			src="https://code.jquery.com/jquery-3.7.1.min.js"
+			integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+			crossorigin="anonymous"
+		></script>
+		<script src="main.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
 		<header>
 			<h1>Home Page</h1>
-			<nav>
-				<ul>
-					<li><a href="communitychallenge.html">Community</a></li>
-					<li><a href="join.html">Join Us</a></li>
-					<li><a href="aboutus.html">About Us</a></li>
-					<li>
-						<a href="#" onclick="logout();return false;">Log Out</a>
-					</li>
-					<a href="profile.html">
-						<img
-							src="pics/download.pdf"
-							alt="Profile Picture"
-							class="profile-pic"
-						/>
-					</a>
-				</ul>
-			</nav>
+			<nav id="head"></nav>
 		</header>
 
 		<main>
@@ -138,32 +128,6 @@
 					btnText.innerHTML = "Read less";
 					moreText.style.display = "inline";
 				}
-			}
-
-			window.addEventListener("load", async function (event) {
-				const token = localStorage.getItem("token");
-
-				const response = await fetch(
-					"http://localhost:3000/test_login",
-					{
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: "Bearer " + token,
-						},
-					}
-				);
-
-				const data = await response.json();
-				if (!data.success) {
-					window.location.href = "login.html";
-				}
-			});
-
-			function logout() {
-				localStorage.removeItem("loggedIn");
-				localStorage.removeItem("token");
-				location.reload();
 			}
 		</script>
 	</body>

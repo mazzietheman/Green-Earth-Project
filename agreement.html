@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms and Conditions</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<style>
+    /* styles.css */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+header {
+  background-color: #4CAF50;
+  padding: 10px 20px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+main {
+  padding: 20px;
+}
+
+.terms-container {
+  background-color: #fff;
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 800px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #4CAF50;
+}
+
+h2 {
+  color: #333;
+  margin-top: 20px;
+}
+
+p, ul {
+  color: #555;
+  line-height: 1.6;
+}
+
+ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+ul li {
+  margin-bottom: 5px;
+}
+
+.agreement {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.agreement label {
+  font-size: 1rem;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+</style>
+
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="about-us.html">About Us</a></li>
+        <li><a href="communities.html">Communities</a></li>
+        <li><a href="join-now.html">Join Now</a></li>
+        <li><a href="home.html">Home</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <main>
+    <section class="terms-container">
+      <h1>Terms and Conditions</h1>
+      <p>Last updated: January 3, 2025</p>
+      
+      <h2>1. Introduction</h2>
+      <p>Welcome to Green Generation! By accessing our platform, you agree to comply with these terms and conditions. If you do not agree, please refrain from using our services.</p>
+      
+      <h2>2. Eligibility</h2>
+      <p>Users must be at least 18 years old or have parental consent to use our services. By joining, you confirm that all information you provide is accurate and complete.</p>
+      
+      <h2>3. User Responsibilities</h2>
+      <p>As a member, you agree to use the platform responsibly and not engage in activities such as:</p>
+      <ul>
+        <li>Providing false or misleading information.</li>
+        <li>Violating any laws or regulations.</li>
+        <li>Posting inappropriate or harmful content.</li>
+      </ul>
+      
+      <h2>4. Recycling Process</h2>
+      <p>The recycling process involves weighing, processing, and accepting goods based on our system standards. Incorrect or non-compliant items may be rejected.</p>
+      
+      <h2>5. Payment Terms</h2>
+      <p>All payments are processed through a secure payment platform. Users are responsible for ensuring their payment details are accurate.</p>
+      
+      <h2>6. Termination</h2>
+      <p>We reserve the right to suspend or terminate accounts for any violation of these terms.</p>
+      
+      <h2>7. Limitation of Liability</h2>
+      <p>Green Generation is not liable for any indirect, incidental, or consequential damages arising from the use of our platform.</p>
+      
+      <h2>8. Changes to Terms</h2>
+      <p>We may update these terms at any time. Users will be notified of significant changes.</p>
+      
+      <h2>9. Contact Us</h2>
+      <p>If you have any questions about these Terms and Conditions, please contact us at <a href="mailto:support@greengeneration.com">support@greengeneration.com</a>.</p>
+      
+      <div class="agreement">
+        <label>
+          <input type="checkbox" id="agree">
+          I agree to the Terms and Conditions.
+        </label>
+        <button id="next-btn" disabled>Next</button>
+      </div>
+    </section>
+  </main>
+  
+  <script>
+    const agreeCheckbox = document.getElementById("agree");
+    const nextButton = document.getElementById("next-btn");
+
+    agreeCheckbox.addEventListener("change", () => {
+      nextButton.disabled = !agreeCheckbox.checked;
+    });
+  </script>
+</body>
+</html>
