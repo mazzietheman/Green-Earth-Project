@@ -7,6 +7,8 @@ const nodemailer = require("nodemailer");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const QRCode = require('qrcode');
 const jwt = require('jsonwebtoken');
+const crypto = require("crypto");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,25 +21,25 @@ app.use(express.static(__dirname));
 
 // Connect to MongoDB
 mongoose
-	.connect("mongodb://localhost:27017/recycle_project", {})
-	.then(() => {
-		console.log("MongoDB connected");
-	})
-	.catch((err) => {
-		console.error("MongoDB connection error:", err);
-	});
+    .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log("MongoDB connected");
+    })
+    .catch((err) => {
+        console.error("MongoDB connection error:", err);
+    });
 
 // Define a schema and model for join requests
 const joinSchema = new mongoose.Schema({
-	firstname: String,
-	lastname: String,
-	username: String,
-	email: String,
-	password: String,
-	vcode: String,
-	city: String,
-	group: String,
-	token: String,
+    firstname: String,
+    lastname: String,
+    username: { type: String, unique: true },
+    email: { type: String, unique: true },
+    password: String,
+    vcode: String,
+    city: String,
+    group: { type: String, default: "member" },
+    token: String,
 });
 
 joinSchema.plugin(mongoosePaginate);
@@ -45,514 +47,166 @@ joinSchema.plugin(mongoosePaginate);
 const JoinRequest = mongoose.model("JoinRequest", joinSchema);
 
 const transporter = nodemailer.createTransport({
-	service: "gmail", // Use your email service provider
-	auth: {
-		user: "mazzie8079@gmail.com", // Your email address
-		pass: "tazc bqef favo ukf", // Your email password or app password
-	},
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
 });
+
+// Helper function to validate input
+const validateFields = (fields, res) => {
+    for (const field in fields) {
+        if (!fields[field]) {
+            res.status(400).json({ success: false, message: `${field} is required.` });
+            return false;
+        }
+    }
+    return true;
+};
 
 // Route to handle join requests
 app.post("/join", async (req, res) => {
-	const { firstname, lastname, username, email, city, password } = req.body;
+    const { firstname, lastname, username, email, city, password } = req.body;
 
-	// Validate input (add your validation logic here)
-	if (!username || !email || !city || !password) {
-		return res
-			.status(400)
-			.json({ success: false, message: "All fields are required." });
-	}
+    if (!validateFields({ firstname, lastname, username, email, city, password }, res)) return;
 
-	//check if email address already registered
-	const doesUserExit = await JoinRequest.exists({ email: email });
-	if (doesUserExit) {
-		res.status(201).json({
-			success: false,
-			message: "Email address already registered",
-		});
-		return;
-	}
+    try {
+        // Check if username or email already exists
+        const [doesUserExist, doesUsernameExist] = await Promise.all([
+            JoinRequest.exists({ email }),
+            JoinRequest.exists({ username }),
+        ]);
 
-	//check if username already registered
-	const doesUsernameExit = await JoinRequest.exists({ username: username });
-	if (doesUsernameExit) {
-		res.status(201).json({
-			success: false,
-			message: "Username address already registered",
-		});
-		return;
-	}
+        if (doesUserExist) {
+            return res.status(409).json({ success: false, message: "Email address already registered." });
+        }
+        if (doesUsernameExist) {
+            return res.status(409).json({ success: false, message: "Username already registered." });
+        }
 
-	// Hash the password before saving (use bcrypt or similar)
-	const hashedPassword = await bcrypt.hash(password, 10);
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-	const newJoinRequest = new JoinRequest({
-		firstname,
-		lastname,
-		username,
-		email,
-		password: hashedPassword,
-		vcode: "",
-		city,
-		group: "member",
-	});
+        const newJoinRequest = new JoinRequest({
+            firstname,
+            lastname,
+            username,
+            email,
+            password: hashedPassword,
+            vcode: "",
+            city,
+        });
 
-	try {
-		await newJoinRequest.save();
-		res.status(201).json({
-			success: true,
-			message: "Join request submitted successfully!",
-		});
-	} catch (error) {
-		res.status(500).json({
-			success: false,
-			message: "An error occurred while saving your request.",
-		});
-	}
-});
+        await newJoinRequest.save();
 
-app.post("/verify-code", async (req, res) => {
-	const { email, code } = req.body;
-
-	try {
-		const row = await JoinRequest.findOne({ email: email });
-
-		if (code === row.vcode) {
-			res.status(200).json({
-				success: true,
-				message: "Verification successful",
-			});
-		} else {
-			res.status(400).json({
-				success: false,
-				message: "Invalid verificaton code.",
-			});
-		}
-	} catch (error) {
-		res.status(500).json({ success: false, message: error.message });
-	}
+        res.status(201).json({ success: true, message: "Join request submitted successfully!" });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
 });
 
 app.post("/send-verification", async (req, res) => {
-	const { email } = req.body;
+    const { email } = req.body;
 
-	// Generate a random verification code
-	const verificationCode = Math.floor(
-		100000 + Math.random() * 900000
-	).toString(); // 6-digit code
+    if (!validateFields({ email }, res)) return;
 
-	await JoinRequest.updateMany({ email: email }, { vcode: verificationCode });
+    try {
+        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        await JoinRequest.updateOne({ email }, { vcode: verificationCode });
 
-	// Set up email options
-	const mailOptions = {
-		from: "mazzie8079@gmail.com", // Your email address
-		to: email,
-		subject: "Verification Code",
-		text: `Your verification code is: ${verificationCode}`,
-	};
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: "Verification Code",
+            text: `Your verification code is: ${verificationCode}`,
+        };
 
-	// Send the email
-	transporter.sendMail(mailOptions, (error, info) => {
-		if (error) {
-			console.error("Error sending email:", error); // Log the error
-			return res
-				.status(500)
-				.json({ error: "An error occurred while sending the email." });
-		}
-		res.status(200).json({
-			message: "Verification code sent successfully!",
-			code: VerificationCode,
-		});
-	});
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ success: true, message: "Verification code sent successfully!" });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error sending verification code." });
+    }
 });
 
 // Route to handle login requests
 app.post("/login", async (req, res) => {
-	const { username, password } = req.body;
+    const { username, password } = req.body;
 
-	// Validate input
-	if (!username || !password) {
-		return res
-			.status(400)
-			.json({ error: "Username and password are required." });
-	}
+    if (!validateFields({ username, password }, res)) return;
 
-	try {
-		// Find the user in the database
-		const user = await JoinRequest.findOne({ username });
-		if (!user) {
-			return res
-				.status(401)
-				.json({ error: "Invalid username or password." });
-		}
+    try {
+        const user = await JoinRequest.findOne({ username });
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json({ success: false, message: "Invalid username or password." });
+        }
 
-		// Compare the password with the hashed password in the database
-		const isMatch = await bcrypt.compare(password, user.password);
-		if (!isMatch) {
-			return res
-				.status(401)
-				.json({ error: "Invalid username or password." });
-		}
+        const tokenString = crypto.randomBytes(64).toString("hex");
+        user.token = tokenString;
+        await user.save();
 
-		// Successful login
-		try {
-			var tokenString = require("crypto").randomBytes(64).toString("hex");
-			await JoinRequest.findOneAndUpdate(
-				{ _id: user._id },
-				{ $set: { token: tokenString } },
-				{ new: true }
-			);
-		} catch (error) {
-			res.status(500).json({ error: error.message });
-		}
-
-		res.status(200).json({
-			message: "Login successful!",
-			token: tokenString,
-		});
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
+        res.status(200).json({ success: true, message: "Login successful!", token: tokenString });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
 });
 
-const tokenCheck = (allowedGroup) => {
-	return async (req, res, next) => {
-		let tokenString = "";
-		if (
-			req.headers.authorization &&
-			req.headers.authorization.split(" ")[0] === "Bearer"
-		) {
-			tokenString = req.headers.authorization.split(" ")[1];
-		}
+const tokenCheck = (allowedGroups) => {
+    return async (req, res, next) => {
+        const tokenString = req.headers.authorization?.split(" ")[1];
 
-		try {
-			const user = await JoinRequest.findOne({ token: tokenString });
+        if (!tokenString) {
+            return res.status(403).json({ success: false, message: "Unauthorized." });
+        }
 
-			if (allowedGroup.includes(user.group)) {
-				req.username = user.username;
-				next();
-			} else {
-				return res.status(403).send({
-					success: false,
-					message: "Unauthorized group",
-				});
-			}
-		} catch (err) {
-			return res.status(403).send({
-				success: false,
-				message: "Unauthorized",
-			});
-		}
-	};
+        try {
+            const user = await JoinRequest.findOne({ token: tokenString });
+            if (!user || !allowedGroups.includes(user.group)) {
+                return res.status(403).json({ success: false, message: "Unauthorized group." });
+            }
+            req.username = user.username;
+            next();
+        } catch (err) {
+            res.status(403).json({ success: false, message: "Unauthorized." });
+        }
+    };
 };
 
-app.get(
-	"/test_login",
-	tokenCheck(["member", "kiosk", "plant", "administrator"]),
-	async function (req, res) {
-		return res.status(200).send({
-			success: true,
-			username: req.username,
-			message: "Yes you loged in",
-		});
-	}
-);
-
-app.get(
-	"/member_qr_code_url",
-	tokenCheck(["member"]),
-	async function (req, res) {
-		const username = req.username;
-		return res.status(200).send({
-			success: true,
-			code: username,
-		});
-	}
-);
-
-app.get("/users/all", async (req, res) => {
-	try {
-		let email = req.query.email;
-		let pageNumber = req.query.page;
-		let group = req.query.group;
-
-		if (pageNumber === undefined) {
-			pageNumber = 1;
-		}
-
-		let query = {};
-		if (email) {
-			query.email = { $regex: new RegExp(email), $options: "i" };
-		}
-
-		if (group) {
-			query.group = group;
-		}
-
-		const rs = await JoinRequest.paginate(query, {
-			page: pageNumber,
-			limit: 10,
-		});
-		const rows = rs.docs;
-		let members = [];
-
-		for (var i = 0; i < rows.length; i++) {
-			members[i] = {
-				id: rows[i]._id.toString(),
-				name: rows[i].firstname + " " + rows[i].lastname,
-				username: rows[i].username,
-				email: rows[i].email,
-				city: rows[i].city,
-				group: rows[i].group,
-			};
-		}
-
-		const r = {
-			rows: members,
-			totalDocs: rs.totalDocs,
-			limit: rs.limit,
-			totalPages: rs.totalPages,
-			page: rs.age,
-			pagingCounter: rs.pagingCounter,
-			hasPrevPage: rs.hasPrevPage,
-			hasNextPage: rs.hasNextPage,
-			prevPage: rs.prevPage,
-			nextPage: rs.nextPage,
-		};
-
-		res.status(200).json({ success: true, data: r });
-	} catch (error) {
-		res.status(500).json({ success: false, message: error.message });
-	}
+// Example route
+app.get("/test_login", tokenCheck(["member", "administrator"]), (req, res) => {
+    res.status(200).json({ success: true, username: req.username, message: "You are logged in!" });
 });
 
-app.get("/users/:id", async (req, res) => {
-	const id = req.params.id;
+app.post("/users/update", async (req, res) => {
+    const { _id, ...updateData } = req.body;
 
-	try {
-		const row = await JoinRequest.findById(id);
-		res.status(200).json({
-			success: true,
-			data: row,
-		});
-	} catch (error) {
-		res.status(404).json({
-			success: false,
-			message: error.message,
-		});
-	}
-});
+    try {
+        const data = await JoinRequest.findByIdAndUpdate(_id, updateData, {
+            useFindAndModify: false,
+            new: true, // Return the updated document
+        });
 
-app.post("/users/add", async (req, res) => {
-	const { firstname, lastname, username, email, city, group, password } =
-		req.body;
-
-	// Validate input
-	if (!username || !email) {
-		return res.status(404).json({
-			success: false,
-			message: "Username and email are required.",
-		});
-	}
-
-	//check if email address already registered
-	const doesUserExit = await JoinRequest.exists({ email: email });
-	if (doesUserExit) {
-		res.status(201).json({
-			success: false,
-			message: "Email address already registered",
-		});
-		return;
-	}
-
-	//check if username already registered
-	const doesUsernameExit = await JoinRequest.exists({ username: username });
-	if (doesUsernameExit) {
-		res.status(201).json({
-			success: false,
-			message: "Username already registered",
-		});
-		return;
-	}
-
-	// Hash the password before saving (use bcrypt or similar)
-	const hashedPassword = await bcrypt.hash(password, 10);
-
-	const newJoinRequest = new JoinRequest({
-		firstname,
-		lastname,
-		username,
-		email,
-		city,
-		group,
-		password: hashedPassword,
-	});
-
-	try {
-		await newJoinRequest.save();
-		res.status(200).json({
-			success: true,
-			message: "Member inserted successfully.",
-		});
-	} catch (error) {
-		res.status(500).json({
-			success: true,
-			error: "An error occurred while saving your request.",
-		});
-	}	
-});
-
-	await JoinRequest.findByIdAndUpdate(_id, req.body, {
-		useFindAndModify: false,
-	})
-		.then((data) => {
-			if (!data) {
-				res.status(404).json({
-					success: false,
-					message: "Member not found.",
-				});
-			} else {
-				res.status(200).json({
-					success: true,
-					message: "Member updated successfully.",
-				});
-			}
-		})
-		.catch((err) => {
-			res.status(500).send({
-				success: false,
-				message: err.message,
-			});
-		});
-
-app.delete("/users/:id", async (req, res) => {
-	const id = req.params.id;
-
-	await JoinRequest.findByIdAndDelete(id)
-		.then((data) => {
-			if (!data) {
-				res.status(404).json({
-					success: false,
-					message: "Member not found",
-				});
-			} else {
-				res.status(200).json({
-					success: true,
-					message: "Member deleted successfully!",
-				});
-			}
-		})
-		.catch((error) => {
-			res.status(500).json({
-				success: false,
-				message: error.message,
-			});
-		});
-});
-
-
-// Schemas
-const GoodsSchema = new mongoose.Schema({
-    qrCode: String,
-    sellerId: mongoose.Schema.Types.ObjectId,
-    type: String,
-    weight: Number,
-    status: { type: String, default: 'Pending' },
-    price: Number,
-});
-const Goods = mongoose.model('Goods', GoodsSchema);
-
-const SellerSchema = new mongoose.Schema({
-    username: String,
-    password: String,
-    balance: { type: Number, default: 0 },
-});
-const Seller = mongoose.model('Seller', SellerSchema);
-
-const PaymentSchema = new mongoose.Schema({
-    goodsId: mongoose.Schema.Types.ObjectId,
-    amount: Number,
-    status: { type: String, default: 'Pending' },
-});
-const Payment = mongoose.model('Payment', PaymentSchema);
-
-// Seller Login
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    const seller = await Seller.findOne({ username });
-
-    if (seller && seller.password === password) { // Simplified for example purposes
-        const token = jwt.sign({ id: seller._id }, 'secretkey', { expiresIn: '1h' });
-        return res.json({ message: "Login successful", token });
+        if (!data) {
+            res.status(404).json({
+                success: false,
+                message: "Member not found.",
+            });
+        } else {
+            res.status(200).json({
+                success: true,
+                message: "Member updated successfully.",
+            });
+        }
+    } catch (err) {
+        res.status(500).send({
+            success: false,
+            message: err.message,
+        });
     }
-
-    return res.status(401).json({ message: "Invalid credentials" });
 });
-
-// Generate QR Code
-app.post('/generate-qr', async (req, res) => {
-    const { sellerId, type, weight } = req.body;
-    const goods = new Goods({ sellerId, type, weight });
-    await goods.save();
-
-    const qrCode = await QRCode.toDataURL(goods._id.toString());
-    res.json({ qrCode });
-});
-
-// Scan QR Code
-app.post('/scan-qr', async (req, res) => {
-    const { qrCode } = req.body;
-    const goods = await Goods.findById(qrCode);
-
-    if (goods) {
-        return res.json({ message: "QR code verified", goods });
-    }
-
-    return res.status(404).json({ message: "Invalid QR code. Please re-scan." });
-});
-
-// Finalize Process
-app.post('/finalize', async (req, res) => {
-    const { goodsId, price } = req.body;
-    const goods = await Goods.findById(goodsId);
-
-    if (!goods) {
-        return res.status(404).json({ message: "Goods not found." });
-    }
-
-    goods.status = 'Accepted';
-    goods.price = price;
-    await goods.save();
-
-    res.json({ message: "Goods finalized", goods });
-});
-
-// Process Payment
-app.post('/process-payment', async (req, res) => {
-    const { goodsId } = req.body;
-    const goods = await Goods.findById(goodsId);
-
-    if (!goods) {
-        return res.status(404).json({ message: "Goods not found." });
-    }
-
-    const seller = await Seller.findById(goods.sellerId);
-    const payment = new Payment({ goodsId, amount: goods.price });
-
-    if (seller) {
-        seller.balance += goods.price;
-        await seller.save();
-        payment.status = 'Completed';
-        await payment.save();
-
-        return res.json({ message: "Payment processed successfully", payment });
-    }
-
-    return res.status(500).json({ message: "Payment processing failed." });
-});
-
 
 // Start the server
 app.listen(PORT, () => {
-	console.log(`Server is running on http://127.0.0.1:${PORT}`);
+    console.log(`Server is running on http://127.0.0.1:${PORT}`);
 });
