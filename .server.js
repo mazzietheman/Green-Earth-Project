@@ -21,7 +21,7 @@ app.use(express.static(__dirname));
 
 // Connect to MongoDB
 mongoose
-    .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect("mongodb://localhost:27017/recycle_project", {})
     .then(() => {
         console.log("MongoDB connected");
     })
