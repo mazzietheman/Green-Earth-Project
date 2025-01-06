@@ -96,19 +96,26 @@ button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+button:hover {
+  background-color: #3e8e41;
+}
+
+button:active {
+  transform: translateY(2px);
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 5px #4CAF50;
+}
 </style>
 
 <body>
-  <header>
-    <nav>
-      <ul>
-        <li><a href="about-us.html">About Us</a></li>
-        <li><a href="communities.html">Communities</a></li>
-        <li><a href="join-now.html">Join Now</a></li>
-        <li><a href="home.html">Home</a></li>
-      </ul>
-    </nav>
-  </header>
   
   <main>
     <section class="terms-container">
@@ -163,6 +170,10 @@ button:disabled {
 
     agreeCheckbox.addEventListener("change", () => {
       nextButton.disabled = !agreeCheckbox.checked;
+    });
+
+    nextButton.addEventListener("click", () => {
+      alert("You have agreed to the Terms and Conditions.");
     });
   </script>
 </body>

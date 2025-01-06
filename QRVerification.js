@@ -7,7 +7,7 @@ const QRVerification = () => {
 
     const verifyQrCode = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/verify_qr', { qr_code: qrCode });
+            const response = await axios.post('http://localhost:3000/verify_qr', { qr_code: qrCode });
             setMessage(response.data.message);
         } catch (error) {
             setMessage(error.response.data.message || 'An error occurred');

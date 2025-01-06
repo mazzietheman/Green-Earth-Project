@@ -21,7 +21,10 @@ app.use(express.static(__dirname));
 
 // Connect to MongoDB
 mongoose
-    .connect("mongodb://localhost:27017/recycle_project", {})
+    .connect("mongodb://localhost:27017/recycle_project", {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
     .then(() => {
         console.log("MongoDB connected");
     })
@@ -31,16 +34,16 @@ mongoose
 
 // Define a schema and model for join requests
 const joinSchema = new mongoose.Schema({
-    firstname: String,
-    lastname: String,
-    username: { type: String, unique: true },
-    email: { type: String, unique: true },
-    password: String,
+    firstname: { type: String, required: true },
+    lastname: { type: String, required: true },
+    username: { type: String, unique: true, required: true },
+    email: { type: String, unique: true, required: true },
+    password: { type: String, required: true },
     vcode: String,
-    city: String,
+    city: { type: String, required: true },
     group: { type: String, default: "member" },
     token: String,
-});
+}, { timestamps: true });
 
 joinSchema.plugin(mongoosePaginate);
 

@@ -6,12 +6,19 @@
 		<title>Welcome to the Green Earth Project</title>
 		<link rel="stylesheet" href="styles.css" />
 		<style>
+			:root {
+				--primary-color: #4caf50;
+				--secondary-color: #45a049;
+				--background-color: #f0f0f0;
+			}
+
 			html,
 			body {
 				height: 100%; /* Set height to 100% */
 				margin: 0; /* Remove default margin */
 				display: flex; /* Use flexbox */
 				flex-direction: column; /* Arrange children in a column */
+				background-color: var(--background-color);
 			}
 
 			main {
@@ -21,31 +28,38 @@
 			.article {
 				float: left;
 				max-width: 30%;
+				padding: 20px;
+				background-color: #fff;
+				border: 1px solid #ddd;
+				border-radius: 10px;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 			}
 
 			/*for mobile design*/
 			@media (max-width: 600px) {
 				.article {
 					max-width: 100%;
+					margin: 20px;
 				}
 			}
 
 			.join-button {
 				display: inline-block;
 				padding: 10px 20px;
-				background-color: #4caf50;
+				background-color: var(--primary-color);
 				color: white;
 				text-decoration: none;
 				border-radius: 10px;
+				transition: background-color 0.3s ease;
 			}
 			.join-button:hover {
-				background-color: #45a049;
+				background-color: var(--secondary-color);
 			}
 
 			.footer {
 				text-align: center;
 				padding: 10px 0;
-				background-color: red;
+				background-color: #333;
 				color: white;
 				width: 100%;
 			}
@@ -110,7 +124,7 @@
 		</main>
 
 		<footer>
-			<p>&copy; © 2023 Green Earth Project. All rights reserved</p>
+			<p>&copy; 2023 Green Earth Project. All rights reserved</p>
 		</footer>
 
 		<script>
